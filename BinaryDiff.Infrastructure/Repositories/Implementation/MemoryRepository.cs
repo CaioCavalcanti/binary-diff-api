@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BinaryDiff.Infrastructure.Repositories.Implementation
 {
@@ -13,11 +14,26 @@ namespace BinaryDiff.Infrastructure.Repositories.Implementation
 
         public TValue Find(TKey key)
         {
-            return _repository[key];
+            if (key == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (_repository.TryGetValue(key, out var value))
+            {
+                return value;
+            }
+
+            return default(TValue);
         }
 
         public void Save(TKey key, TValue value)
         {
+            if (key == null)
+            {
+                throw new InvalidOperationException();
+            }
+
             _repository[key] = value;
         }
     }

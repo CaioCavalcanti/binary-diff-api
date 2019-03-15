@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BinaryDiff.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("v1/diff")]
     [ApiController]
     public class DiffController : ControllerBase
     {
@@ -28,7 +28,11 @@ namespace BinaryDiff.API.Controllers
         [HttpPost("{id}/left")]
         public async Task<IActionResult> PostLeftAsync([FromRoute]Guid id, [FromBody]string strBase64)
         {
-            // TODO: is id valid?
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             // TODO: does id exist?
             // TODO: conflicts?
             // TODO: is base64?
@@ -41,7 +45,11 @@ namespace BinaryDiff.API.Controllers
         [HttpPost("{id}/right")]
         public async Task<IActionResult> PostRightAsync([FromRoute]Guid id, [FromBody]string strBase64)
         {
-            // TODO: does id exists?
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             // TODO: does id exist?
             // TODO: conflicts?
             // TODO: is base64?
@@ -54,6 +62,11 @@ namespace BinaryDiff.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDiffAsync([FromRoute]Guid id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             // TODO: does id exists?
             // TODO: get diff
 
@@ -72,6 +85,14 @@ namespace BinaryDiff.API.Controllers
             // TODO: return offset + length if same size
 
             return Ok(diffResult);
+        }
+
+        private void ValidateId(Guid id)
+        {
+            if (id == null || id == Guid.Empty)
+            {
+                ModelState.AddModelError("Id", "Id informed is not valid");
+            }
         }
     }
 }
