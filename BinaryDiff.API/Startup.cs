@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BinaryDiff.Domain.Logic;
+using BinaryDiff.Domain.Logic.Implementation;
+using BinaryDiff.Infrastructure.Repositories;
+using BinaryDiff.Infrastructure.Repositories.Implementation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace BinaryDiff.API
 {
@@ -26,6 +23,8 @@ namespace BinaryDiff.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            ConfigureIoC(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,6 +41,14 @@ namespace BinaryDiff.API
 
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        private void ConfigureIoC(IServiceCollection services)
+        {
+            services
+                .AddSingleton<ILeftRepository, LeftRepository>()
+                .AddSingleton<IRightRepository, RightRepository>()
+                .AddTransient<IDiffLogic, DiffLogic>();
         }
     }
 }
