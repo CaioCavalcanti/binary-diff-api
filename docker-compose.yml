@@ -1,0 +1,15 @@
+version: '3.4'
+
+networks: 
+  binary-diff-api-dev:
+    driver: bridge
+
+services:
+  binary-diff-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    networks: 
+      - binary-diff-api-dev
