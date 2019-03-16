@@ -15,6 +15,7 @@ PoC proposal:
   - If not of equal size just return that
   - If of same size provide insight in where the diffs are, actual diffs are not needed.
     - So mainly offsets + length in the data
+- Data persistency implementation is not the focus, but should implement the correct abstractions so it can be easily replaced
 
 Assumptions were taken on how to implement this PoC, you can check it at the end under [its section at the end](#Assumptions).
 
@@ -24,17 +25,7 @@ Assumptions were taken on how to implement this PoC, you can check it at the end
 - Unit and integration tests on XUnit
 - Docker files: `Dockerfile` and `docker-compose.yml`
 
-```
-TODO: give more details on what's in it and why
-```
-
 # Running it
-
-There are different ways to run the project, see the sections below to.
-
-As soon as it finishes building the containers the API will be available on `http://localhost:8000/v1/<RESOURCE_PATH>`.
-
-### Docker
 
 The project was built to run on Docker (~~because runs on my machine is not an excuse~~), so you just need to execute the command below on the repo:
 
@@ -42,16 +33,16 @@ The project was built to run on Docker (~~because runs on my machine is not an e
 $ docker-compose up
 ```
 
-As soon as it finishes building the containers the service will be available on `http://localhost:8000/v1/`, but you can configure a different port on `Dockerfile` if needed.
+As soon as it finishes building the container, the service will be available on `http://localhost:8000/v1/<RESOURCE_PATH>` (you can configure a different port on `Dockerfile` if needed).
 
-If Docker is not an option in your case, you can also run using [NET Core CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/?tabs=netcore2x) with the following commands:
+If Docker is not an option in your case, you can also run it using [NET Core CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/?tabs=netcore2x) with the following commands:
 
 ```
 $ dotnet restore
 $ dotnet run --project BinaryDiff.API\BinaryDiff.API.csproj
 ```
 
-Swagger is configured
+Swagger is configured and available on root `http://localhost:8000/`.
 
 # Testing
 
@@ -69,7 +60,7 @@ If you are interested on code coverage you can use params `/p:CollectCoverage=tr
 $ dotnet test /p:CollectCoverage=true /p:Exclude="[xunit*]*"
 ```
 
-- `/p:Exclude="[xunit*]*"` is needed to avoid an known issue in Coverlet ([Latest NuGet package no longer works #359](https://github.com/tonerdo/coverlet/issues/359))
+`/p:Exclude="[xunit*]*"` is needed to avoid an known issue in Coverlet ([Latest NuGet package no longer works #359](https://github.com/tonerdo/coverlet/issues/359))
 
 ## Stressing out
 
@@ -118,23 +109,11 @@ Content-Type: application/json
 
 - `null` and `string.Empty` are valid inputs and were taken in consideration as length 0.
 - `/left` and `/right` expect the input as a base 64 encoded string.
-- Differences field is optional and will be returned only if diff result is `Different`. Examples: 
+- Differences field is optional and will be returned only if diff result is `Different`. Examples:
 
 ```
 {
-    "result": "Equal"
-}
-
-// OR
-
-{
-    "result": "LeftIsLarger"
-}
-
-// OR
-
-{
-    "result": "RightIsLarger"
+    "result": "Equal" // or "LeftIsLarger", or "RightIsLarger"
 }
 
 // OR
