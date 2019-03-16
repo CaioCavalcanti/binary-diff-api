@@ -8,7 +8,7 @@
     public interface IMemoryRepository<TKey, TValue>
     {
         /// <summary>
-        /// Saves an object in a dictionary in memory
+        /// Saves an object in a repository
         /// </summary>
         /// <param name="key">Entity key</param>
         /// <param name="value">Entity of type TValue</param>
@@ -16,11 +16,17 @@
         void Save(TKey key, TValue value);
 
         /// <summary>
-        /// Retrieves a value from in memory dictionary for a given key
+        /// Retrieves an object on repository dictionary in a given key
         /// </summary>
         /// <param name="key">Entity of type TValue or its default value</param>
         /// <returns>Entity of type TValue</returns>
         /// <exception cref="System.InvalidOperationException">Throws exception for null key</exception>
         TValue Find(TKey key);
+
+        /// <summary>
+        /// Removes key from repository
+        /// </summary>
+        /// <param name="key">Entity key of type TKey</param>
+        void Remove(TKey key);
     }
 }

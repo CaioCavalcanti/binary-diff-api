@@ -94,6 +94,29 @@ namespace BinaryDiff.Tests.Unit.Infrastructure
             Assert.Equal(newObject, existing);
         }
 
+        [Fact]
+        public void Remove_RemovesKeyValuePairFromRepository()
+        {
+            var expected = _seedData.First();
+
+            _repository.Remove(expected.Key);
+
+            var result = _repository.Find(expected.Key);
+
+            Assert.Equal(default(object), result);
+        }
+
+        /// <summary>
+        /// Tests expected exception in case key provided is null
+        /// </summary>
+        [Fact]
+        public void Remove_ThrowsInvalidOperationException_IfKeyIsNull()
+        {
+            Guid? key = null;
+
+            Assert.Throws<InvalidOperationException>(() => _repository.Remove(key.Value));
+        }
+
         private static IDictionary<Guid, object> _seedData => new Dictionary<Guid, object>
         {
             { new Guid("bc0d9ca3-7d10-47f2-9b64-b88425e55149"), new { value = "foo" } },

@@ -21,6 +21,7 @@ namespace BinaryDiff.API.Controllers
     public class DiffController : ControllerBase
     {
         private readonly IMemoryRepository<Guid, Diff> _diffRepository;
+        private readonly IMemoryRepository<Guid, DiffResult> _resultRepository;
         private readonly IDiffLogic _logic;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
@@ -29,17 +30,20 @@ namespace BinaryDiff.API.Controllers
         /// Injects types necessary for controller
         /// </summary>
         /// <param name="diffRepository"></param>
+        /// <param name="resultRepository"></param>
         /// <param name="logic"></param>
         /// <param name="mapper"></param>
         /// <param name="logger"></param>
         public DiffController(
             IMemoryRepository<Guid, Diff> diffRepository,
+            IMemoryRepository<Guid, DiffResult> resultRepository,
             IDiffLogic logic,
             IMapper mapper,
             ILogger<DiffController> logger
         )
         {
             _diffRepository = diffRepository;
+            _resultRepository = resultRepository;
             _logic = logic;
             _mapper = mapper;
             _logger = logger;
@@ -120,7 +124,18 @@ namespace BinaryDiff.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            _logger.LogDebug($"Find({id}): retrieving item on repository");
+            _logger.LogDebug($"Find({id}): retrieving result on repository");
+            var existingResult = _resultRepository.Find(id);
+
+            if (existingResult != null)
+            {
+                _logger.LogDebug($"Result ({id} - {Enum.GetName(typeof(ResultType), existingResult.Result)}) found on repository");
+                return Ok(_mapper.Map<DiffResultViewModel>(existingResult));
+            }
+
+            _logger.LogDebug($"Diff result ({id}) not found on repository");
+
+            _logger.LogDebug($"Find({id}): retrieving diff on repository to calculate diff");
             var diff = _diffRepository.Find(id);
 
             if (diff == null)
@@ -134,9 +149,8 @@ namespace BinaryDiff.API.Controllers
             _logger.LogDebug($"GetResult({id}): Calculating results");
             var diffResult = _logic.GetResult(diff);
 
-            // TODO: return equal
-            // TODO: return not equal size
-            // TODO: return offset + length if same size
+            _logger.LogDebug($"Save({id}): Saving new result");
+            _resultRepository.Save(id, diffResult);
 
             _logger.LogDebug($"Diff result for {id}: {Enum.GetName(typeof(ResultType), diffResult.Result)}");
             return Ok(_mapper.Map<DiffResultViewModel>(diffResult));
@@ -173,6 +187,10 @@ namespace BinaryDiff.API.Controllers
 
             _logger.LogDebug($"Save({diffId}, Diff obj): saving item on repository");
             _diffRepository.Save(diff.Id, diff);
+
+
+            _logger.LogDebug($"Remove({diffId}, Diff obj): removing diff result for id");
+            _resultRepository.Remove(diff.Id);
 
             return Created($"/v1/diff/{diff.Id.ToString()}", null);
         }

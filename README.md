@@ -108,12 +108,22 @@ Content-Type: application/json
 ```
 
 - `null` and `string.Empty` are valid inputs and were taken in consideration as length 0.
-- `/left` and `/right` expect the input as a base 64 encoded string.
-- Differences field is optional and will be returned only if diff result is `Different`. Examples:
+- For the sake of time, `/left` and `/right` expect the input as a base 64 encoded string sent as example below.
+```
+POST /v1/diff/<ID>/<left|right> HTTP/1.1
+Host: <HOST>
+Content-type: application/json
+[...]
+
+{
+    "data": "SGVsbG93IFdvcmxkIQ=="
+}
+```
+- `differences` will be returned only if diff result is `Different`. Example:
 
 ```
 {
-    "result": "Equal" // or "LeftIsLarger", or "RightIsLarger"
+    "result": "Equal | LeftIsLarger | RightIsLarger"
 }
 
 // OR
@@ -128,6 +138,6 @@ Content-Type: application/json
     }
 }
 ```
-
+- Diff result will be stored on repository to reduce processing time
 - If not timestamp provided on query params when getting diff results, it will compare the latest data on both sides.
 - Timestamps always in UTC

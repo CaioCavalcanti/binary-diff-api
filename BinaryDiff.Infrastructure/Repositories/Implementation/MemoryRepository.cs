@@ -64,5 +64,19 @@ namespace BinaryDiff.Infrastructure.Repositories.Implementation
 
             _items[key] = value;
         }
+
+        /// <summary>
+        /// Removes key from repository
+        /// </summary>
+        /// <param name="key">Entity key of type TKey</param>
+        public void Remove(TKey key)
+        {
+            if (key == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            _items.Remove(key);
+        }
     }
 }
