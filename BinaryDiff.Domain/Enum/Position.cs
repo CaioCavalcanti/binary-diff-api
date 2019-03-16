@@ -1,6 +1,6 @@
 ﻿namespace BinaryDiff.Domain.Enum
 {
-    public enum DiffDirection
+    public enum Position
     {
         Left = 0,
         Right

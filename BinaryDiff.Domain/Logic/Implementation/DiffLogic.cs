@@ -1,80 +1,42 @@
 ﻿using BinaryDiff.Domain.Enum;
+using BinaryDiff.Domain.Helpers;
 using BinaryDiff.Domain.Models;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BinaryDiff.Domain.Logic.Implementation
 {
     public class DiffLogic : IDiffLogic
     {
-        public DiffType GetResultFor(Diff diff, out Dictionary<int, int> differences)
+        public DiffResult GetResultFor(Diff diff)
+        {
+            var result = GetResultDetails(diff, out var differences);
+
+            return new DiffResult
+            {
+                Id = diff.Id,
+                Result = result,
+                Differences = differences
+            };
+        }
+
+        private ResultType GetResultDetails(Diff diff, out IDictionary<int, int> differences)
         {
             differences = null;
 
-            var left = GetLastInput(diff, DiffDirection.Left);
-            var right = GetLastInput(diff, DiffDirection.Right);
-
-            if (left.Data.Equals(right.Data))
+            if (diff.Left.Equals(diff.Right))
             {
-                return DiffType.Equal;
+                return ResultType.AreEqual;
             }
-            else if (left.Data.Length != right.Data.Length)
+            else if (diff.Left.Length != diff.Right.Length)
             {
-                return DiffType.DifferentSize;
-            }
-
-            differences = GetDiffDetails(left.Data, right.Data);
-
-            return DiffType.DifferentContent;
-        }
-
-        private Dictionary<int, int> GetDiffDetails(string left, string right)
-        {
-            var differences = new Dictionary<int, int>();
-
-            int length = 0;
-            int offset = -1;
-
-            for (int i = 0; i <= left.Length; i++)
-            {
-                if (i < left.Length && left[i] != right[i])
-                {
-                    length++;
-
-                    if (offset < 0)
-                    {
-                        offset = i;
-                    }
-                }
-                else if (offset != -1)
-                {
-                    differences[offset] = length;
-
-                    length = 0;
-                    offset = 1;
-                }
+                return diff.Left.Length > diff.Right.Length
+                    ? ResultType.LeftIsLarger
+                    : ResultType.RightIsLarger;
             }
 
-            return differences;
-        }
+            differences = StringHelper.GetStringDifferences(diff.Left, diff.Right);
 
-        public DiffInput AddInput(Diff diff, DiffDirection direction, string data)
-        {
-            var input = new DiffInput(direction, data);
-
-            if (diff.Inputs == null)
-            {
-                diff.Inputs = new List<DiffInput>();
-            }
-
-            diff.Inputs.Add(input);
-
-            return input;
-        }
-
-        private static DiffInput GetLastInput(Diff diff, DiffDirection direction)
-        {
-            return diff.Inputs?.LastOrDefault(_ => _.Direction == direction);
+            return ResultType.DifferentContent;
         }
     }
 }

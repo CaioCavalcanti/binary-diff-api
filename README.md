@@ -73,7 +73,8 @@ Location: /v1/diff/c274cfba-653f-472b-b10f-b18d56a655a4
 [...]
 
 {
-    "id": "26e67e07-f142-440e-b7af-dd39842c8678"
+    "id": "26e67e07-f142-440e-b7af-dd39842c8678",
+    "inputs": []
 }
 ```
 
@@ -93,6 +94,8 @@ Content-Type: application/json
 [...]
 ```
 
+- Null is a valid input on both 'left' and 'right'
 - The difference result is based on **bas64 encoded** binary data provided.
+- 
 - If not timestamp provided on query params when getting diff results, it will compare the latest data on both sides.
 - Timestamps always in UTC

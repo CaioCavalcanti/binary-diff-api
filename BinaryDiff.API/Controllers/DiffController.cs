@@ -56,9 +56,9 @@ namespace BinaryDiff.API.Controllers
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(typeof(DiffNotFoundMessage), 404)]
         [ProducesResponseType(typeof(ExceptionMessage), 500)]
-        public async Task<IActionResult> PostLeftAsync([FromRoute]Guid id, [FromBody]DiffInputViewModel input)
+        public IActionResult PostLeftAsync([FromRoute]Guid id, [FromBody]DiffInputViewModel input)
         {
-            return HandlePostInputOn(id, DiffDirection.Left, input);
+            return HandlePostInputOn(id, Position.Left, input);
         }
 
         [HttpPost("{id}/right")]
@@ -66,9 +66,9 @@ namespace BinaryDiff.API.Controllers
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(typeof(DiffNotFoundMessage), 404)]
         [ProducesResponseType(typeof(ExceptionMessage), 500)]
-        public async Task<IActionResult> PostRightAsync([FromRoute]Guid id, [FromBody]DiffInputViewModel input)
+        public IActionResult PostRight([FromRoute]Guid id, [FromBody]DiffInputViewModel input)
         {
-            return HandlePostInputOn(id, DiffDirection.Right, input);
+            return HandlePostInputOn(id, Position.Right, input);
         }
 
         [HttpGet("{id}")]
@@ -90,15 +90,9 @@ namespace BinaryDiff.API.Controllers
                 return NotFound(new DiffNotFoundMessage(id));
             }
 
-            // TODO: does id exists?
-            // TODO: get diff
-
-            // TODO: does it have right?
-            // TODO: does it have left?
-
             // TODO: has it changed since last call?
 
-            var diffResult = _logic.GetResultFor(diff, out var diffDetails);
+            var diffResult = _logic.GetResultFor(diff);
 
             // TODO: return equal
             // TODO: return not equal size
@@ -107,24 +101,30 @@ namespace BinaryDiff.API.Controllers
             return Ok(_mapper.Map<DiffResultViewModel>(diffResult));
         }
 
-        private IActionResult HandlePostInputOn(Guid id, DiffDirection direction, DiffInputViewModel input)
+        private IActionResult HandlePostInputOn(Guid diffId, Position position, DiffInputViewModel input)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var diff = _diffRepository.Find(id);
+            var diff = _diffRepository.Find(diffId);
 
             if (diff == null)
             {
-                return NotFound(new DiffNotFoundMessage(id));
+                return NotFound(new DiffNotFoundMessage(diffId));
             }
 
-            // TODO: conflicts?
             // TODO: send new input event
 
-            _logic.AddInput(diff, direction, input.Data);
+            if (position == Position.Left)
+            {
+                diff.Left = input.Data;
+            }
+            else if (position == Position.Right)
+            {
+                diff.Right = input.Data;
+            }
 
             _diffRepository.Save(diff.Id, diff);
 
