@@ -61,9 +61,8 @@ namespace BinaryDiff.API
         private void ConfigureIoC(IServiceCollection services)
         {
             services
-                .AddSingleton<IMemoryRepository<Guid, DiffModel>, MemoryRepository<Guid, DiffModel>>()
-                .AddSingleton<ILeftRepository, LeftRepository>()
-                .AddSingleton<IRightRepository, RightRepository>()
+                .AddSingleton<IMemoryRepository<Guid, Diff>, MemoryRepository<Guid, Diff>>()
+                .AddSingleton<IMemoryRepository<Guid, DiffResult>, MemoryRepository<Guid, DiffResult>>()
                 .AddTransient<IDiffLogic, DiffLogic>();
         }
 
