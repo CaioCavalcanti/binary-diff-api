@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BinaryDiff.API.Helpers;
 using BinaryDiff.API.Helpers.Messages;
 using BinaryDiff.API.ViewModels;
 using BinaryDiff.Domain.Enum;
@@ -7,8 +8,10 @@ using BinaryDiff.Domain.Models;
 using BinaryDiff.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace BinaryDiff.API.Controllers
 {
@@ -25,6 +28,7 @@ namespace BinaryDiff.API.Controllers
         private readonly IDiffLogic _logic;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
+        private readonly IDistributedCache _cache;
 
         /// <summary>
         /// Injects types necessary for controller
@@ -39,7 +43,8 @@ namespace BinaryDiff.API.Controllers
             IMemoryRepository<Guid, DiffResult> resultRepository,
             IDiffLogic logic,
             IMapper mapper,
-            ILogger<DiffController> logger
+            ILogger<DiffController> logger,
+            IDistributedCache cache
         )
         {
             _diffRepository = diffRepository;
@@ -47,6 +52,7 @@ namespace BinaryDiff.API.Controllers
             _logic = logic;
             _mapper = mapper;
             _logger = logger;
+            _cache = cache;
         }
 
         /// <summary>
@@ -83,9 +89,9 @@ namespace BinaryDiff.API.Controllers
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(typeof(DiffNotFoundMessage), 404)]
         [ProducesResponseType(typeof(ExceptionMessage), 500)]
-        public IActionResult PostLeft([FromRoute]Guid id, [FromBody]DiffInputViewModel input)
+        public async Task<IActionResult> PostLeft([FromRoute]Guid id, [FromBody]DiffInputViewModel input)
         {
-            return HandlePostInputOn(id, Position.Left, input);
+            return await HandlePostInputOnAsync(id, Position.Left, input);
         }
 
         /// <summary>
@@ -99,9 +105,9 @@ namespace BinaryDiff.API.Controllers
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(typeof(DiffNotFoundMessage), 404)]
         [ProducesResponseType(typeof(ExceptionMessage), 500)]
-        public IActionResult PostRight([FromRoute]Guid id, [FromBody]DiffInputViewModel input)
+        public async Task<IActionResult> PostRight([FromRoute]Guid id, [FromBody]DiffInputViewModel input)
         {
-            return HandlePostInputOn(id, Position.Right, input);
+            return await HandlePostInputOnAsync(id, Position.Right, input);
         }
 
         /// <summary>
@@ -114,7 +120,7 @@ namespace BinaryDiff.API.Controllers
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(typeof(DiffNotFoundMessage), 404)]
         [ProducesResponseType(typeof(ExceptionMessage), 500)]
-        public IActionResult GetDiffResult([FromRoute]Guid id)
+        public async Task<IActionResult> GetDiffResultAsync([FromRoute]Guid id)
         {
             _logger.LogDebug($"GetDiffResult({id})");
 
@@ -124,13 +130,21 @@ namespace BinaryDiff.API.Controllers
                 return BadRequest(ModelState);
             }
 
+            _logger.LogDebug($"Cache.GetAsync({id}): retrieving result on cache");
+            var cachedResult = await _cache.GetAsync<DiffResult>(id.ToString());
+
+            if (cachedResult != null)
+            {
+                return await DiffResultOkResponse(cachedResult, false);
+            }
+
             _logger.LogDebug($"Find({id}): retrieving result on repository");
             var existingResult = _resultRepository.Find(id);
 
             if (existingResult != null)
             {
-                _logger.LogDebug($"Result ({id} - {Enum.GetName(typeof(ResultType), existingResult.Result)}) found on repository");
-                return Ok(_mapper.Map<DiffResultViewModel>(existingResult));
+                _logger.LogDebug($"Result ({id}) found on repository");
+                return await DiffResultOkResponse(existingResult);
             }
 
             _logger.LogDebug($"Diff result ({id}) not found on repository");
@@ -144,19 +158,29 @@ namespace BinaryDiff.API.Controllers
                 return NotFound(new DiffNotFoundMessage(id));
             }
 
-            // TODO: has it changed since last call?
-
             _logger.LogDebug($"GetResult({id}): Calculating results");
             var diffResult = _logic.GetResult(diff);
 
             _logger.LogDebug($"Save({id}): Saving new result");
             _resultRepository.Save(id, diffResult);
 
-            _logger.LogDebug($"Diff result for {id}: {Enum.GetName(typeof(ResultType), diffResult.Result)}");
-            return Ok(_mapper.Map<DiffResultViewModel>(diffResult));
+            return await DiffResultOkResponse(diffResult);
         }
 
-        private IActionResult HandlePostInputOn(Guid diffId, Position position, DiffInputViewModel input)
+        private async Task<IActionResult> DiffResultOkResponse(DiffResult result, bool cacheResult = true)
+        {
+            if (cacheResult)
+            {
+                _logger.LogDebug($"Caching result for {result.Id}");
+                await _cache.CacheAsync(result.Id.ToString(), result);
+            }
+
+            var viewModel = _mapper.Map<DiffResultViewModel>(result);
+
+            return Ok(viewModel);
+        }
+
+        private async Task<IActionResult> HandlePostInputOnAsync(Guid diffId, Position position, DiffInputViewModel input)
         {
             if (!ModelState.IsValid)
             {
@@ -188,9 +212,11 @@ namespace BinaryDiff.API.Controllers
             _logger.LogDebug($"Save({diffId}, Diff obj): saving item on repository");
             _diffRepository.Save(diff.Id, diff);
 
-
             _logger.LogDebug($"Remove({diffId}, Diff obj): removing diff result for id");
             _resultRepository.Remove(diff.Id);
+
+            _logger.LogDebug($"Remove result from cache");
+            await _cache.RemoveAsync(diff.Id.ToString());
 
             return Created($"/v1/diff/{diff.Id.ToString()}", null);
         }
