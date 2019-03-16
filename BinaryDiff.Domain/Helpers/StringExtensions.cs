@@ -13,11 +13,12 @@ namespace BinaryDiff.Domain.Helpers
         /// </summary>
         /// <param name="a">String to compare</param>
         /// <param name="b">String to compare against (right)</param>
+        /// <param name="differences">out list of differences as dictinoary where key is offset and value is length</param>
         /// <exception cref="InvalidOperationException">Throws <b>InvalidOperationException</b> if string don't have the same size</exception>
         /// <returns>Dictionary where key is offset and value is length</returns>
         public static bool EqualsToSameSizeString(this string a, string b, out IDictionary<int, int> differences)
         {
-            differences = new Dictionary<int, int>();
+            differences = null;
 
             if (Equals(a, b))
             {
@@ -45,6 +46,11 @@ namespace BinaryDiff.Domain.Helpers
                 }
                 else if (offset.HasValue)
                 {
+                    if (differences == null)
+                    {
+                        differences = new Dictionary<int, int>();
+                    }
+
                     differences[offset.Value] = length;
 
                     offset = null;
@@ -55,6 +61,12 @@ namespace BinaryDiff.Domain.Helpers
             return differences.Count == 0;
         }
 
+        /// <summary>
+        /// Safely compares two string by their length, considering null and empty as valid options (length 0)
+        /// </summary>
+        /// <param name="a">String instace</param>
+        /// <param name="b">String instace to compare with</param>
+        /// <returns>bool whether a is larger than b or not</returns>
         public static bool IsLargerThan(this string a, string b)
         {
             var aIsNullOrEmpty = string.IsNullOrEmpty(a);

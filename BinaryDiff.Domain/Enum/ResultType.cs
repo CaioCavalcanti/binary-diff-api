@@ -1,19 +1,25 @@
-﻿using System.ComponentModel;
-
-namespace BinaryDiff.Domain.Enum
+﻿namespace BinaryDiff.Domain.Enum
 {
+    /// <summary>
+    /// Possible result types when comparing left/right data
+    /// </summary>
     public enum ResultType
     {
-        [DisplayName("Data provided on both left and right are equal")]
-        AreEqual = 0,
-
-        [DisplayName("Left data is larger than right")]
+        /// <summary>
+        /// Data provided on both left and right are equal
+        /// </summary>
+        Equal = 0,
+        /// <summary>
+        /// Left data is larger than right
+        /// </summary>
         LeftIsLarger,
-
-        [DisplayName("Right data is larger than left")]
+        /// <summary>
+        /// Right data is larger than left
+        /// </summary>
         RightIsLarger,
-
-        [DisplayName("Left and right have the same size, but there are differences between them.")]
-        DifferentContent
+        /// <summary>
+        /// Left and right have the same size, but there are differences between them
+        /// </summary>
+        Different
     }
 }

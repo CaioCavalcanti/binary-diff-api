@@ -5,9 +5,17 @@ using System.Collections.Generic;
 
 namespace BinaryDiff.Domain.Logic.Implementation
 {
+    /// <summary>
+    /// Logic used to diff data
+    /// </summary>
     public class DiffLogic : IDiffLogic
     {
-        public DiffResult GetResultFor(Diff diff)
+        /// <summary>
+        /// Diffs data on left and right position
+        /// </summary>
+        /// <param name="diff">Diff instance</param>
+        /// <returns cref="BinaryDiff.Domain.Models.DiffResult">DiffResult with difference details</returns>
+        public DiffResult GetResult(Diff diff)
         {
             var result = GetResultDetails(diff, out var differences);
 
@@ -33,8 +41,8 @@ namespace BinaryDiff.Domain.Logic.Implementation
             }
 
             return diff.Left.EqualsToSameSizeString(diff.Right, out differences)
-                ? ResultType.AreEqual
-                : ResultType.DifferentContent;
+                ? ResultType.Equal
+                : ResultType.Different;
         }
     }
 }

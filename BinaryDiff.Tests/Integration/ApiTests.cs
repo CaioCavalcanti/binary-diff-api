@@ -12,15 +12,26 @@ using Xunit;
 
 namespace BinaryDiff.Tests.Integration
 {
+    /// <summary>
+    /// API integration tests on happy-path and common issues
+    /// </summary>
     public class ApiTests : IClassFixture<WebApplicationFactory<BinaryDiff.API.Startup>>
     {
         private readonly HttpClient _client;
 
+        /// <summary>
+        /// Create a new client instance for testing
+        /// </summary>
+        /// <param name="factory"></param>
         public ApiTests(WebApplicationFactory<BinaryDiff.API.Startup> factory)
         {
             _client = factory.CreateClient();
         }
 
+        /// <summary>
+        /// Tests created result when adding new result
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         public async Task PostDiff_CreatesDiff_Returns201NewDiff()
         {
@@ -33,6 +44,11 @@ namespace BinaryDiff.Tests.Integration
             Assert.NotEqual(createdDiff.Id, Guid.Empty);
         }
 
+        /// <summary>
+        /// Tests created result when adding new input on left
+        /// </summary>
+        /// <param name="data">Possible data to be sent</param>
+        /// <returns></returns>
         [Theory]
         [InlineData(null)]
         [InlineData("")]
@@ -54,6 +70,11 @@ namespace BinaryDiff.Tests.Integration
             Assert.Equal(string.Empty, content);
         }
 
+        /// <summary>
+        /// Tests created result when adding new input on left
+        /// </summary>
+        /// <param name="data">Possible data to be sent</param>
+        /// <returns></returns>
         [Theory]
         [InlineData(null)]
         [InlineData("")]
@@ -75,65 +96,94 @@ namespace BinaryDiff.Tests.Integration
             Assert.Equal(string.Empty, content);
         }
 
+        /// <summary>
+        /// Tests bad request result for invalid id
+        /// </summary>
+        /// <param name="id">Invalid id</param>
+        /// <returns></returns>
         [Theory]
         [InlineData("1")]
         [InlineData("SGVsbG8gV29ybGQh")]
-        public async Task PostLeft_IfInvalidId_Returns400ModelErrors(string id)
+        public async Task PostLeft_Returns400ModelErrors_IfInvalidId(string id)
         {
             var response = await _client.PostAsync($"/v1/diff/{id}/left", PrepareData());
 
             await AssertBadRequestForInvalidIdAsync(id, response);
         }
 
+        /// <summary>
+        /// Tests bad request result for invalid id
+        /// </summary>
+        /// <param name="id">Invalid id</param>
+        /// <returns></returns>
         [Theory]
         [InlineData("1")]
         [InlineData("SGVsbG8gV29ybGQh")]
-        public async Task PostRight_IfInvalidId_Returns400ModelErrors(string id)
+        public async Task PostRight_Returns400ModelErrors_IfInvalidId(string id)
         {
             var response = await _client.PostAsync($"/v1/diff/{id}/right", PrepareData());
 
             await AssertBadRequestForInvalidIdAsync(id, response);
         }
 
+        /// <summary>
+        /// Tests not found result for a key that doesn't exist
+        /// </summary>
+        /// <returns></returns>
         [Fact]
-        public async Task PostLeft_IfIdNotFound_Returns404DiffNotFoundMessage()
+        public async Task PostLeft_Returns404DiffNotFoundMessage_IfIdNotFound()
         {
             // Act
-            var response = await _client.PostAsync($"/v1/diff/{NotFoundDiffId}/left", PrepareData());
+            var response = await _client.PostAsync($"/v1/diff/{_notFoundId}/left", PrepareData());
 
             // Assert
             await AssertNotFoundMessageAsync(response);
         }
 
+        /// <summary>
+        /// Tests not found result for a key that doesn't exist
+        /// </summary>
+        /// <returns></returns>
         [Fact]
-        public async Task PostRight_IfIdNotFound_Returns404DiffNotFoundMessage()
+        public async Task PostRight_Returns404DiffNotFoundMessage_IfIdNotFound()
         {
             // Act
-            var response = await _client.PostAsync($"/v1/diff/{NotFoundDiffId}/right", PrepareData());
+            var response = await _client.PostAsync($"/v1/diff/{_notFoundId}/right", PrepareData());
 
             // Assert
             await AssertNotFoundMessageAsync(response);
         }
 
+        /// <summary>
+        /// Tests not found result for a key that doesn't exist
+        /// </summary>
+        /// <returns></returns>
         [Fact]
-        public async Task GetDiffResult_IfIdNotFound_Returns404DiffNotFoundMessage()
+        public async Task GetDiffResult_Returns404DiffNotFoundMessage_IfIdNotFound()
         {
             // Act
-            var response = await _client.GetAsync($"/v1/diff/{NotFoundDiffId}");
+            var response = await _client.GetAsync($"/v1/diff/{_notFoundId}");
 
             // Assert
             await AssertNotFoundMessageAsync(response);
         }
 
+        /// <summary>
+        /// Tests diff result for different possible scenarios, with expected results
+        /// </summary>
+        /// <param name="left">Left input</param>
+        /// <param name="right">Right input</param>
+        /// <param name="expectedResult">Expected scenario</param>
+        /// <returns></returns>
         [Theory]
-        [InlineData(null, null, ResultType.AreEqual)]
-        [InlineData("", "", ResultType.AreEqual)]
-        [InlineData("SGVsbG8gV29ybGQh", "SGVsbG8gV29ybGQh", ResultType.AreEqual)]
+        [InlineData(null, null, ResultType.Equal)]
+        [InlineData("", "", ResultType.Equal)]
+        [InlineData("SGVsbG8gV29ybGQh", "SGVsbG8gV29ybGQh", ResultType.Equal)]
         [InlineData("SGVsbG8gV29ybGQh", null, ResultType.LeftIsLarger)]
         [InlineData("SGVsbG8gV29ybGQh", "SGVsbG8h", ResultType.LeftIsLarger)]
         [InlineData(null, "SGVsbG8gV29ybGQh", ResultType.RightIsLarger)]
         [InlineData("SGVsbG8h", "SGVsbG8gV29ybGQh", ResultType.RightIsLarger)]
-        [InlineData("SGVsbG8h", "SGVMTG8h", ResultType.DifferentContent)]
+        [InlineData("SGVsbG8h", "SGVMTG8h", ResultType.Different)]
         public async Task GetDiffResult_Returns200DiffResultsViewModel(string left, string right, ResultType expectedResult)
         {
             // Arrange
@@ -172,7 +222,7 @@ namespace BinaryDiff.Tests.Integration
 
         private async Task AssertNotFoundMessageAsync(HttpResponseMessage response)
         {
-            var expectedMessage = $"We couldn't find a diff with ID '{NotFoundDiffId}'";
+            var expectedMessage = $"We couldn't find a diff with ID '{_notFoundId}'";
 
             var content = await response.Content.ReadAsStringAsync();
             var notFoundResult = JsonConvert.DeserializeObject<DiffNotFoundMessage>(content);
@@ -181,8 +231,6 @@ namespace BinaryDiff.Tests.Integration
             Assert.NotNull(notFoundResult);
             Assert.Equal(expectedMessage, notFoundResult.Message);
         }
-
-        private static string NotFoundDiffId => "00000000-0000-0000-0000-000000000000";
 
         private StringContent PrepareData(string data = null)
         {
@@ -195,5 +243,7 @@ namespace BinaryDiff.Tests.Integration
 
             return new StringContent(serializedInput, Encoding.UTF8, "application/json");
         }
+
+        private static string _notFoundId => "00000000-0000-0000-0000-000000000000";
     }
 }

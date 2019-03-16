@@ -2,8 +2,16 @@
 
 namespace BinaryDiff.Domain.Logic
 {
+    /// <summary>
+    /// Logic used to diff data
+    /// </summary>
     public interface IDiffLogic
     {
-        DiffResult GetResultFor(Diff diff);
+        /// <summary>
+        /// Diffs data on left and right position
+        /// </summary>
+        /// <param name="diff">Diff instance</param>
+        /// <returns cref="BinaryDiff.Domain.Models.DiffResult">DiffResult with difference details</returns>
+        DiffResult GetResult(Diff diff);
     }
 }

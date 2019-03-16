@@ -11,6 +11,9 @@ using System;
 
 namespace BinaryDiff.API.Controllers
 {
+    /// <summary>
+    /// v1 endpoints for Diff resource
+    /// </summary>
     [Produces("application/json")]
     [Route("v1/diff")]
     [ApiController]
@@ -20,6 +23,12 @@ namespace BinaryDiff.API.Controllers
         private readonly IDiffLogic _logic;
         private readonly IMapper _mapper;
 
+        /// <summary>
+        /// Injects types necessary for controller
+        /// </summary>
+        /// <param name="diffRepository"></param>
+        /// <param name="logic"></param>
+        /// <param name="mapper"></param>
         public DiffController(
             IMemoryRepository<Guid, Diff> diffRepository,
             IDiffLogic logic,
@@ -32,11 +41,11 @@ namespace BinaryDiff.API.Controllers
         }
 
         /// <summary>
-        /// Generates a diff
+        /// Generates a new diff entity
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(typeof(DiffViewModel), 201)]
         [ProducesResponseType(typeof(ExceptionMessage), 500)]
         [ProducesResponseType(typeof(DiffViewModel), 201)]
         public IActionResult PostDiff()
@@ -50,6 +59,12 @@ namespace BinaryDiff.API.Controllers
             return Created($"/v1/diff/{newDiff.Id.ToString()}", _mapper.Map<DiffViewModel>(newDiff));
         }
 
+        /// <summary>
+        /// Insert base64 data on left position of a diff entity for given id
+        /// </summary>
+        /// <param name="id">Guid identifier of diff entity</param>
+        /// <param name="input">Base 64 encoded binary data</param>
+        /// <returns></returns>
         [HttpPost("{id}/left")]
         [ProducesResponseType(201)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
@@ -60,6 +75,12 @@ namespace BinaryDiff.API.Controllers
             return HandlePostInputOn(id, Position.Left, input);
         }
 
+        /// <summary>
+        /// Insert base64 data on right position of a diff entity for given id
+        /// </summary>
+        /// <param name="id">Guid identifier of diff entity</param>
+        /// <param name="input">Base 64 encoded binary data</param>
+        /// <returns></returns>
         [HttpPost("{id}/right")]
         [ProducesResponseType(201)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
@@ -70,6 +91,11 @@ namespace BinaryDiff.API.Controllers
             return HandlePostInputOn(id, Position.Right, input);
         }
 
+        /// <summary>
+        /// Returns a diff result for data provided on left and right positions
+        /// </summary>
+        /// <param name="id">Guid identifier of diff entity</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(DiffResultViewModel), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
@@ -91,7 +117,7 @@ namespace BinaryDiff.API.Controllers
 
             // TODO: has it changed since last call?
 
-            var diffResult = _logic.GetResultFor(diff);
+            var diffResult = _logic.GetResult(diff);
 
             // TODO: return equal
             // TODO: return not equal size

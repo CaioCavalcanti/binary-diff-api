@@ -11,6 +11,7 @@ COPY ["BinaryDiff.Infrastructure/BinaryDiff.Infrastructure.csproj", "BinaryDiff.
 COPY ["BinaryDiff.Tests/BinaryDiff.Tests.csproj", "BinaryDiff.Tests/"]
 RUN dotnet restore
 COPY . .
+RUN dotnet test --no-restore -l:"console;verbosity=minimal" /p:CollectCoverage=true /p:Exclude="[xunit*]*"
 WORKDIR "/src/BinaryDiff.API"
 RUN dotnet build "BinaryDiff.API.csproj" -c Release -o /app
 

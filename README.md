@@ -44,6 +44,12 @@ The API documentation is available on Swagger.
 $ dotnet test
 ```
 
+To get code coverage, use params `/p:CollectCoverage=true /p:Exclude="[xunit*]*"`
+
+```
+$ dotnet test /p:CollectCoverage=true /p:Exclude="[xunit*]*"
+```
+
 ```
 TODO: give more detail on how to execute unit, integration tests or/and both
 ```
@@ -96,6 +102,7 @@ Content-Type: application/json
 
 - Null is a valid input on both 'left' and 'right'
 - The difference result is based on **bas64 encoded** binary data provided.
-- 
+-
 - If not timestamp provided on query params when getting diff results, it will compare the latest data on both sides.
 - Timestamps always in UTC
+- `null` and `string.Empty` are valid inputs and were taken in consideration as length 0.

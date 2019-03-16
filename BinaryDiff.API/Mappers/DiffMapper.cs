@@ -6,8 +6,15 @@ using System;
 
 namespace BinaryDiff.API.Mappers
 {
+    /// <summary>
+    /// Defines the ViewModels/Models mapping rules for Diff domain.
+    /// Map configuration profile for AutoMapper (auto discovered on Startup).
+    /// </summary>
     public class DiffMapper : Profile
     {
+        /// <summary>
+        /// Declares the available mappings
+        /// </summary>
         public DiffMapper()
         {
             CreateMap<Diff, DiffViewModel>();
