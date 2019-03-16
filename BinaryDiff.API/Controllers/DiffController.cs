@@ -8,7 +8,6 @@ using BinaryDiff.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
-using System.Threading.Tasks;
 
 namespace BinaryDiff.API.Controllers
 {
@@ -40,7 +39,7 @@ namespace BinaryDiff.API.Controllers
         [ProducesResponseType(201)]
         [ProducesResponseType(typeof(ExceptionMessage), 500)]
         [ProducesResponseType(typeof(DiffViewModel), 201)]
-        public async Task<IActionResult> PostDiff()
+        public IActionResult PostDiff()
         {
             var newDiff = new Diff();
 
@@ -56,7 +55,7 @@ namespace BinaryDiff.API.Controllers
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(typeof(DiffNotFoundMessage), 404)]
         [ProducesResponseType(typeof(ExceptionMessage), 500)]
-        public IActionResult PostLeftAsync([FromRoute]Guid id, [FromBody]DiffInputViewModel input)
+        public IActionResult PostLeft([FromRoute]Guid id, [FromBody]DiffInputViewModel input)
         {
             return HandlePostInputOn(id, Position.Left, input);
         }
@@ -76,7 +75,7 @@ namespace BinaryDiff.API.Controllers
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(typeof(DiffNotFoundMessage), 404)]
         [ProducesResponseType(typeof(ExceptionMessage), 500)]
-        public async Task<IActionResult> GetDiffAsync([FromRoute]Guid id)
+        public IActionResult GetDiffResult([FromRoute]Guid id)
         {
             if (!ModelState.IsValid)
             {

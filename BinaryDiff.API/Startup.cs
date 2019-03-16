@@ -40,8 +40,7 @@ namespace BinaryDiff.API
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddAutoMapper();
-
+            ConfigureAutoMapper(services);
             ConfigureIoC(services);
             ConfigureSwagger(services);
         }
@@ -121,6 +120,15 @@ namespace BinaryDiff.API
                     // TODO: log error
                 });
             });
+        }
+
+        private void ConfigureAutoMapper(IServiceCollection services)
+        {
+            Mapper.Initialize(cfg => { });
+
+            services.AddAutoMapper();
+
+            Mapper.AssertConfigurationIsValid();
         }
     }
 }

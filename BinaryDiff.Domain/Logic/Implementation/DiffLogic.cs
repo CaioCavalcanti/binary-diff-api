@@ -23,20 +23,18 @@ namespace BinaryDiff.Domain.Logic.Implementation
         {
             differences = null;
 
-            if (diff.Left.Equals(diff.Right))
+            if (diff.Left.IsLargerThan(diff.Right))
             {
-                return ResultType.AreEqual;
+                return ResultType.LeftIsLarger;
             }
-            else if (diff.Left.Length != diff.Right.Length)
+            else if (diff.Right.IsLargerThan(diff.Left))
             {
-                return diff.Left.Length > diff.Right.Length
-                    ? ResultType.LeftIsLarger
-                    : ResultType.RightIsLarger;
+                return ResultType.RightIsLarger;
             }
 
-            differences = diff.Left.CompareToSameSizeString(diff.Right);
-
-            return ResultType.DifferentContent;
+            return diff.Left.EqualsToSameSizeString(diff.Right, out differences)
+                ? ResultType.AreEqual
+                : ResultType.DifferentContent;
         }
     }
 }
