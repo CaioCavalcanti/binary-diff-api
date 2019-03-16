@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BinaryDiff.API.Helpers.Messages;
+using BinaryDiff.API.Helpers;
 using BinaryDiff.Domain.Logic;
 using BinaryDiff.Domain.Logic.Implementation;
 using BinaryDiff.Domain.Models;
@@ -7,11 +7,9 @@ using BinaryDiff.Infrastructure.Repositories;
 using BinaryDiff.Infrastructure.Repositories.Implementation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
@@ -58,7 +56,8 @@ namespace BinaryDiff.API
             }
 
             ConfigureSwagger(app);
-            ConfigureExceptionHandling(app);
+
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             app.UseHttpsRedirection();
             app.UseMvc();
@@ -102,23 +101,6 @@ namespace BinaryDiff.API
             {
                 cfg.SwaggerEndpoint("/swagger/v1/swagger.json", "Binary Diff API v1");
                 cfg.RoutePrefix = string.Empty;
-            });
-        }
-
-        private void ConfigureExceptionHandling(IApplicationBuilder app)
-        {
-            app.UseExceptionHandler(opt =>
-            {
-                opt.Run(async context =>
-                {
-                    var errorId = Guid.NewGuid();
-                    var message = new ExceptionMessage(errorId);
-
-                    context.Response.ContentType = "application/json";
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject(message));
-
-                    // TODO: log error
-                });
             });
         }
 
