@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace BinaryDiff.API.Controllers
 {
+    [Produces("application/json")]
     [Route("v1/diff")]
     [ApiController]
     public class DiffController : ControllerBase
@@ -30,6 +31,9 @@ namespace BinaryDiff.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> PostDiff()
         {
             var newDiff = new DiffModel();
@@ -42,6 +46,9 @@ namespace BinaryDiff.API.Controllers
         }
 
         [HttpPost("{id}/left")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> PostLeftAsync([FromRoute]Guid id, [FromBody]string strBase64)
         {
             if (!ModelState.IsValid)
@@ -60,6 +67,9 @@ namespace BinaryDiff.API.Controllers
         }
 
         [HttpPost("{id}/right")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> PostRightAsync([FromRoute]Guid id, [FromBody]string strBase64)
         {
             if (!ModelState.IsValid)
@@ -78,6 +88,9 @@ namespace BinaryDiff.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetDiffAsync([FromRoute]Guid id)
         {
             if (!ModelState.IsValid)
