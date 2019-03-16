@@ -14,7 +14,10 @@
 
   <ItemGroup>
     <Folder Include="Integration\" />
-    <Folder Include="Unit\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BinaryDiff.Domain\BinaryDiff.Domain.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -34,7 +34,7 @@ namespace BinaryDiff.Domain.Logic.Implementation
                     : ResultType.RightIsLarger;
             }
 
-            differences = StringHelper.GetStringDifferences(diff.Left, diff.Right);
+            differences = diff.Left.CompareToSameSizeString(diff.Right);
 
             return ResultType.DifferentContent;
         }
