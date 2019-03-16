@@ -1,9 +1,12 @@
-﻿using BinaryDiff.API.ViewModels;
+﻿using AutoMapper;
+using BinaryDiff.API.Helpers.Messages;
+using BinaryDiff.API.ViewModels;
 using BinaryDiff.Domain.Enum;
 using BinaryDiff.Domain.Logic;
 using BinaryDiff.Domain.Models;
 using BinaryDiff.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Threading.Tasks;
 
@@ -16,20 +19,27 @@ namespace BinaryDiff.API.Controllers
     {
         private readonly IMemoryRepository<Guid, Diff> _diffRepository;
         private readonly IDiffLogic _logic;
+        private readonly IMapper _mapper;
 
         public DiffController(
             IMemoryRepository<Guid, Diff> diffRepository,
-            IDiffLogic logic
+            IDiffLogic logic,
+            IMapper mapper
         )
         {
             _diffRepository = diffRepository;
             _logic = logic;
+            _mapper = mapper;
         }
 
+        /// <summary>
+        /// Generates a diff
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(ExceptionMessage), 500)]
+        [ProducesResponseType(typeof(DiffViewModel), 201)]
         public async Task<IActionResult> PostDiff()
         {
             var newDiff = new Diff();
@@ -38,14 +48,14 @@ namespace BinaryDiff.API.Controllers
 
             // TODO: send new diff event
 
-            return Created($"/v1/diff/{newDiff.Id.ToString()}", newDiff);
+            return Created($"/v1/diff/{newDiff.Id.ToString()}", _mapper.Map<DiffViewModel>(newDiff));
         }
 
         [HttpPost("{id}/left")]
         [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(DiffNotFoundMessage), 404)]
+        [ProducesResponseType(typeof(ExceptionMessage), 500)]
         public async Task<IActionResult> PostLeftAsync([FromRoute]Guid id, [FromBody]DiffInputViewModel input)
         {
             return HandlePostInputOn(id, DiffDirection.Left, input);
@@ -53,19 +63,19 @@ namespace BinaryDiff.API.Controllers
 
         [HttpPost("{id}/right")]
         [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(DiffNotFoundMessage), 404)]
+        [ProducesResponseType(typeof(ExceptionMessage), 500)]
         public async Task<IActionResult> PostRightAsync([FromRoute]Guid id, [FromBody]DiffInputViewModel input)
         {
             return HandlePostInputOn(id, DiffDirection.Right, input);
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(DiffResultViewModel), 200)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(DiffNotFoundMessage), 404)]
+        [ProducesResponseType(typeof(ExceptionMessage), 500)]
         public async Task<IActionResult> GetDiffAsync([FromRoute]Guid id)
         {
             if (!ModelState.IsValid)
@@ -73,11 +83,11 @@ namespace BinaryDiff.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var aDiff = _diffRepository.Find(id);
+            var diff = _diffRepository.Find(id);
 
-            if (aDiff == null)
+            if (diff == null)
             {
-                return NotFound();
+                return NotFound(new DiffNotFoundMessage(id));
             }
 
             // TODO: does id exists?
@@ -88,21 +98,13 @@ namespace BinaryDiff.API.Controllers
 
             // TODO: has it changed since last call?
 
-            var diffResult = _logic.GetResultFor(aDiff, out var diffDetails);
+            var diffResult = _logic.GetResultFor(diff, out var diffDetails);
 
             // TODO: return equal
             // TODO: return not equal size
             // TODO: return offset + length if same size
 
-            return Ok(new { diffResult, diffDetails });
-        }
-
-        private void ValidateId(Guid id)
-        {
-            if (id == null || id == Guid.Empty)
-            {
-                ModelState.AddModelError("Id", "Id informed is not valid");
-            }
+            return Ok(_mapper.Map<DiffResultViewModel>(diffResult));
         }
 
         private IActionResult HandlePostInputOn(Guid id, DiffDirection direction, DiffInputViewModel input)
@@ -116,7 +118,7 @@ namespace BinaryDiff.API.Controllers
 
             if (diff == null)
             {
-                return NotFound();
+                return NotFound(new DiffNotFoundMessage(id));
             }
 
             // TODO: conflicts?
