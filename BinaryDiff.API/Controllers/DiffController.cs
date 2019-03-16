@@ -1,4 +1,5 @@
 ﻿using BinaryDiff.Domain.Logic;
+using BinaryDiff.Domain.Models;
 using BinaryDiff.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,19 +11,34 @@ namespace BinaryDiff.API.Controllers
     [ApiController]
     public class DiffController : ControllerBase
     {
+        private readonly IMemoryRepository<Guid, DiffModel> _diffRepository;
         private readonly ILeftRepository _leftRepository;
         private readonly IRightRepository _rightRepository;
         private readonly IDiffLogic _logic;
 
         public DiffController(
+            IMemoryRepository<Guid, DiffModel> diffRepository,
             ILeftRepository leftRepository,
             IRightRepository rightRepository,
             IDiffLogic logic
         )
         {
+            _diffRepository = diffRepository;
             _leftRepository = leftRepository;
             _rightRepository = rightRepository;
             _logic = logic;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostDiff()
+        {
+            var newDiff = new DiffModel();
+
+            _diffRepository.Save(newDiff.Id, newDiff);
+
+            // TODO: send new diff event
+
+            return Created($"/v1/diff/{newDiff.Id.ToString()}", newDiff);
         }
 
         [HttpPost("{id}/left")]
@@ -36,6 +52,7 @@ namespace BinaryDiff.API.Controllers
             // TODO: does id exist?
             // TODO: conflicts?
             // TODO: is base64?
+            // TODO: send new left event
 
             _leftRepository.Save(id, strBase64);
 
@@ -53,6 +70,7 @@ namespace BinaryDiff.API.Controllers
             // TODO: does id exist?
             // TODO: conflicts?
             // TODO: is base64?
+            // TODO: send new right event
 
             _rightRepository.Save(id, strBase64);
 

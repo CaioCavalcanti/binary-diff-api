@@ -1,5 +1,6 @@
 ﻿using BinaryDiff.Domain.Logic;
 using BinaryDiff.Domain.Logic.Implementation;
+using BinaryDiff.Domain.Models;
 using BinaryDiff.Infrastructure.Repositories;
 using BinaryDiff.Infrastructure.Repositories.Implementation;
 using Microsoft.AspNetCore.Builder;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace BinaryDiff.API
 {
@@ -46,6 +48,7 @@ namespace BinaryDiff.API
         private void ConfigureIoC(IServiceCollection services)
         {
             services
+                .AddSingleton<IMemoryRepository<Guid, DiffModel>, MemoryRepository<Guid, DiffModel>>()
                 .AddSingleton<ILeftRepository, LeftRepository>()
                 .AddSingleton<IRightRepository, RightRepository>()
                 .AddTransient<IDiffLogic, DiffLogic>();
