@@ -69,6 +69,7 @@ Accept: application/json
 # Response
 HTTP/1.1 200 OK
 Content-Type: application/json
+Location: /v1/diff/c274cfba-653f-472b-b10f-b18d56a655a4
 [...]
 
 {
@@ -94,3 +95,4 @@ Content-Type: application/json
 
 - The difference result is based on **bas64 encoded** binary data provided.
 - If not timestamp provided on query params when getting diff results, it will compare the latest data on both sides.
+- Timestamps always in UTC
