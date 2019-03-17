@@ -3,13 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.API", "BinaryDiff.API\BinaryDiff.API.csproj", "{DC1BD04F-8FD3-4AFA-A153-05169A2DD948}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.API", "BinaryDiff.API\BinaryDiff.API.csproj", "{DC1BD04F-8FD3-4AFA-A153-05169A2DD948}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Infrastructure", "BinaryDiff.Infrastructure\BinaryDiff.Infrastructure.csproj", "{BEABCC46-7260-41EF-9EE5-32E177349163}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Infrastructure", "BinaryDiff.Infrastructure\BinaryDiff.Infrastructure.csproj", "{BEABCC46-7260-41EF-9EE5-32E177349163}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Tests", "BinaryDiff.Tests\BinaryDiff.Tests.csproj", "{E6809788-274D-4454-84C6-F8A788597F2A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Tests", "BinaryDiff.Tests\BinaryDiff.Tests.csproj", "{E6809788-274D-4454-84C6-F8A788597F2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Domain", "BinaryDiff.Domain\BinaryDiff.Domain.csproj", "{62AE1AC9-DC20-48D5-832F-5F14EA15C4AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Domain", "BinaryDiff.Domain\BinaryDiff.Domain.csproj", "{62AE1AC9-DC20-48D5-832F-5F14EA15C4AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.ApiGateway", "Apps\BinaryDiff.ApiGateway\BinaryDiff.ApiGateway.csproj", "{0B616B2B-5701-4177-A9EA-E1289671E679}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{EC6BEFFE-F5CB-414D-9610-63090F7521C0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{A2FF6B6D-2C4D-4C21-AFAC-F5CB67C2B62A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ingestion", "Ingestion", "{2087104F-620B-493E-9FCB-B479FCC91BEE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Result", "Result", "{80D7863B-3F93-4948-B6EA-A209F28C27C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Ingestion.WebApi", "Services\Ingestion\BinaryDiff.Ingestion.WebApi\BinaryDiff.Ingestion.WebApi.csproj", "{BBE2A61E-0E43-49E8-A639-341CCFCDF36A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Ingestion.Domain", "Services\Ingestion\BinaryDiff.Ingestion.Domain\BinaryDiff.Ingestion.Domain.csproj", "{E7BEB07C-ABE8-4CBE-BCDF-B02D303471B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Ingestion.Infrastructure", "Services\Ingestion\BinaryDiff.Ingestion.Infrastructure\BinaryDiff.Ingestion.Infrastructure.csproj", "{9716B83D-BE53-4E64-A115-38D597033AB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,9 +49,33 @@ Global
 		{62AE1AC9-DC20-48D5-832F-5F14EA15C4AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62AE1AC9-DC20-48D5-832F-5F14EA15C4AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62AE1AC9-DC20-48D5-832F-5F14EA15C4AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B616B2B-5701-4177-A9EA-E1289671E679}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B616B2B-5701-4177-A9EA-E1289671E679}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B616B2B-5701-4177-A9EA-E1289671E679}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B616B2B-5701-4177-A9EA-E1289671E679}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBE2A61E-0E43-49E8-A639-341CCFCDF36A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBE2A61E-0E43-49E8-A639-341CCFCDF36A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBE2A61E-0E43-49E8-A639-341CCFCDF36A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBE2A61E-0E43-49E8-A639-341CCFCDF36A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7BEB07C-ABE8-4CBE-BCDF-B02D303471B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7BEB07C-ABE8-4CBE-BCDF-B02D303471B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7BEB07C-ABE8-4CBE-BCDF-B02D303471B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7BEB07C-ABE8-4CBE-BCDF-B02D303471B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9716B83D-BE53-4E64-A115-38D597033AB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9716B83D-BE53-4E64-A115-38D597033AB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9716B83D-BE53-4E64-A115-38D597033AB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9716B83D-BE53-4E64-A115-38D597033AB9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0B616B2B-5701-4177-A9EA-E1289671E679} = {EC6BEFFE-F5CB-414D-9610-63090F7521C0}
+		{2087104F-620B-493E-9FCB-B479FCC91BEE} = {A2FF6B6D-2C4D-4C21-AFAC-F5CB67C2B62A}
+		{80D7863B-3F93-4948-B6EA-A209F28C27C4} = {A2FF6B6D-2C4D-4C21-AFAC-F5CB67C2B62A}
+		{BBE2A61E-0E43-49E8-A639-341CCFCDF36A} = {2087104F-620B-493E-9FCB-B479FCC91BEE}
+		{E7BEB07C-ABE8-4CBE-BCDF-B02D303471B7} = {2087104F-620B-493E-9FCB-B479FCC91BEE}
+		{9716B83D-BE53-4E64-A115-38D597033AB9} = {2087104F-620B-493E-9FCB-B479FCC91BEE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {037C5D6A-591E-4375-A877-7F3DA674C8E2}

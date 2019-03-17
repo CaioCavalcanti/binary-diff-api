@@ -138,6 +138,7 @@ Content-type: application/json
     }
 }
 ```
-- Diff result will be stored on repository to reduce processing time
+- Diff results are stored on a repository to reduce processing time
+- When a diff result is returned, its timestamp is sent on response header
 - If not timestamp provided on query params when getting diff results, it will compare the latest data on both sides.
 - Timestamps always in UTC

@@ -1,15 +1,34 @@
 version: '3.4'
 
-networks: 
-  binary-diff-api-dev:
-    driver: bridge
-
 services:
-  binary-diff-api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  input-webapi:
+    image: caiocavalcanti/binary-diff-input-webapi:latest
+    restart: always
+    build: ./Services/BinaryDiff.Input
+    entrypoint: >
+      dotnet BinaryDiff.Input.WebApi.dll
     ports:
-      - "8000:80"
-    networks: 
-      - binary-diff-api-dev
+      - 5000:5000
+      
+  result-webapi:
+    image: caiocavalcanti/binary-diff-result-webapi:latest
+    restart: always
+    build: ./Services/BinaryDiff.Result
+    entrypoint: >
+      dotnet BinaryDiff.Result.WebApi.dll
+    ports:
+      - 6000:6000
+
+  api-gateway:
+    image: caiocavalcanti/binary-diff-api-gateway:latest
+    restart: always
+    build: ./Apps/BinaryDiff.ApiGateway
+    entrypoint: >
+      /app/wait-for-it.sh --strict --timeout=30 input-webapi:5000 --
+      /app/wait-for-it.sh --strict --timeout=30 result-webapi:6000 --
+      dotnet BinaryDiff.ApiGateway.dll
+    ports:
+      - 4000:4000
+    depends_on:
+      - input-webapi
+      - result-webapi
