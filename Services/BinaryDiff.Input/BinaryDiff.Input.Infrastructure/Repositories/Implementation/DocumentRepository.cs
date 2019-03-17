@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace BinaryDiff.Input.Infrastructure.Repositories.Implementation
 {
-    public class Repository<TDocument> : IRepository<TDocument>
+    public abstract class DocumentRepository<TDocument> : IDocumentRepository<TDocument>
         where TDocument : BaseDocument
     {
         private readonly IMongoCollection<TDocument> _collection;
 
-        public Repository(IMongoCollection<TDocument> collection)
+        public DocumentRepository(IMongoCollection<TDocument> collection)
         {
             _collection = collection;
         }
@@ -30,13 +30,6 @@ namespace BinaryDiff.Input.Infrastructure.Repositories.Implementation
             var result = await _collection.FindAsync(filter);
 
             return result.ToList();
-        }
-
-        public async Task<bool> UpdateOneAsync(string documentId, TDocument document)
-        {
-            var result = await _collection.ReplaceOneAsync(_ => _._id == documentId, document);
-
-            return result.IsAcknowledged && result.ModifiedCount > 0;
         }
     }
 }

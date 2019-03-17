@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using BinaryDiff.Input.Infrastructure.Configuration;
 using BinaryDiff.Input.Infrastructure.Repositories;
 using BinaryDiff.Input.Infrastructure.Repositories.Implementation;
 using BinaryDiff.Input.WebApi.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
@@ -14,6 +16,13 @@ namespace BinaryDiff.Input.WebApi
 {
     public class Startup
     {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services
@@ -24,6 +33,7 @@ namespace BinaryDiff.Input.WebApi
                     opt.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
                 });
 
+            ConfigureOptions(services);
             ConfigureIoC(services);
             ConfigureSwagger(services);
             ConfigureAutoMapper(services);
@@ -43,9 +53,19 @@ namespace BinaryDiff.Input.WebApi
             app.UseMvc();
         }
 
+        private void ConfigureOptions(IServiceCollection services)
+        {
+            services.AddOptions();
+
+            services.Configure<MongoConfiguration>(Configuration.GetSection("mongo"));
+        }
+
         private void ConfigureIoC(IServiceCollection services)
         {
-            services.AddSingleton<IUnitOfWork, UnitOfWork>();
+            services
+                .AddSingleton<IMongoContext, MongoContext>()
+                .AddSingleton<IDiffRepository, DiffRepository>()
+                .AddSingleton<IInputRepository, InputRepository>();
         }
 
         private void ConfigureSwagger(IServiceCollection services)

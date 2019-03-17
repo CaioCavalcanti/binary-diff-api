@@ -1,28 +1,48 @@
 version: '3.4'
 
+networks:
+  binary-diff-dev:
+    driver: bridge
+
 services:
   input-webapi:
     image: caiocavalcanti/binary-diff-input-webapi:latest
     restart: always
     build: ./Services/BinaryDiff.Input
+    environment:
+      mongo__host: mongodb
+      mongo__user: root
+      mongo__password: notSoSafePassword
+      ASPNETCORE_URLS: http://+:5000
     entrypoint: >
+      /app/wait-for-it.sh --strict --timeout=30 mongodb:27017 --
       dotnet BinaryDiff.Input.WebApi.dll
     ports:
       - 5000:5000
-      
+    networks:
+      - binary-diff-dev
+    depends_on:
+      - mongodb
+
   result-webapi:
     image: caiocavalcanti/binary-diff-result-webapi:latest
     restart: always
     build: ./Services/BinaryDiff.Result
     entrypoint: >
       dotnet BinaryDiff.Result.WebApi.dll
+    environment:
+      ASPNETCORE_URLS: http://+:6000
     ports:
       - 6000:6000
+    networks:
+      - binary-diff-dev
 
   api-gateway:
     image: caiocavalcanti/binary-diff-api-gateway:latest
     restart: always
     build: ./Apps/BinaryDiff.ApiGateway
+    environment:
+      ASPNETCORE_URLS: http://+:4000
     entrypoint: >
       /app/wait-for-it.sh --strict --timeout=30 input-webapi:5000 --
       /app/wait-for-it.sh --strict --timeout=30 result-webapi:6000 --
@@ -32,3 +52,5 @@ services:
     depends_on:
       - input-webapi
       - result-webapi
+    networks:
+      - binary-diff-dev

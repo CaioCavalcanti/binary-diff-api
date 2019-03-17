@@ -11,23 +11,26 @@ using System.Threading.Tasks;
 
 namespace BinaryDiff.Input.WebApi.Controllers
 {
-    [Route("api/diffs")]
+    [Route("v1/diffs")]
     [ApiController]
     [Produces("application/json")]
     public class DiffController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly IUnitOfWork _uow;
+        private readonly IDiffRepository _diffRepository;
+        private readonly IInputRepository _inputRepository;
         private readonly IMapper _mapper;
 
         public DiffController(
             ILogger<DiffController> logger,
-            IUnitOfWork uow,
+            IDiffRepository diffRepository,
+            IInputRepository inputRepository,
             IMapper mapper
         )
         {
             _logger = logger;
-            _uow = uow;
+            _diffRepository = diffRepository;
+            _inputRepository = inputRepository;
             _mapper = mapper;
         }
 
@@ -42,7 +45,7 @@ namespace BinaryDiff.Input.WebApi.Controllers
 
             _logger.LogDebug("Adding diff...");
 
-            await _uow.DiffRepository.AddOneAsync(newDiff);
+            await _diffRepository.AddOneAsync(newDiff);
 
             _logger.LogDebug($"Diff added ({newDiff.UUID.ToString()})");
 
@@ -82,7 +85,7 @@ namespace BinaryDiff.Input.WebApi.Controllers
 
             _logger.LogDebug($"Find({diffId}): retrieving item on repository");
 
-            var diff = await _uow.DiffRepository.FindAsync(_ => _.UUID == diffId);
+            var diff = await _diffRepository.FindAsync(_ => _.UUID == diffId);
 
             if (diff == null)
             {
@@ -94,7 +97,7 @@ namespace BinaryDiff.Input.WebApi.Controllers
             var newInput = new InputData(diffId, position, input.Data);
 
             _logger.LogDebug($"Save({diffId}, Diff obj): saving item on repository");
-            await _uow.InputRepository.AddOneAsync(newInput);
+            await _inputRepository.AddOneAsync(newInput);
 
             return Created(diffId.ToString(), null);
         }

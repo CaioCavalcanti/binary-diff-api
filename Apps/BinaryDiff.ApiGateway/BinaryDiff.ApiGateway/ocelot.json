@@ -1,40 +1,40 @@
 {
   "ReRoutes": [
     {
-      "DownstreamPathTemplate": "/v1/diff",
+      "DownstreamPathTemplate": "/v1/diffs",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 4000
+          "Host": "input-webapi",
+          "Port": 5000
         }
       ],
-      "UpstreamPathTemplate": "/input",
-      "UpstreamHttpMethod": [ "Post" ]
+      "UpstreamPathTemplate": "/v1/diff",
+      "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/v1/diff/{id}/left",
+      "DownstreamPathTemplate": "/v1/diffs/{id}/left",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 4000
+          "Host": "input-webapi",
+          "Port": 5000
         }
       ],
-      "UpstreamPathTemplate": "/input/{id}/left",
-      "UpstreamHttpMethod": [ "Post" ]
+      "UpstreamPathTemplate": "/v1/diff/{id}/left",
+      "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/v1/diff/{id}/right",
+      "DownstreamPathTemplate": "/v1/diffs/{id}/right",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 4000
+          "Host": "input-webapi",
+          "Port": 5000
         }
       ],
-      "UpstreamPathTemplate": "/input/{id}/right",
-      "UpstreamHttpMethod": [ "Post" ]
+      "UpstreamPathTemplate": "/v1/diff/{id}/right",
+      "UpstreamHttpMethod": [ "POST" ]
     }
   ],
   "GlobalConfiguration": {}

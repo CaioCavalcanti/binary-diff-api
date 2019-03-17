@@ -1,6 +1,5 @@
 FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
 WORKDIR /app
-ENV ASPNETCORE_URLS=http://+:6000
 EXPOSE 6000
 
 FROM microsoft/dotnet:2.1-sdk AS build

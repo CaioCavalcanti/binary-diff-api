@@ -10,7 +10,8 @@ namespace BinaryDiff.Input.Domain.Models
         /// </summary>
         [BsonIgnoreIfNull]
         [BsonId]
+        [BsonElement("_id")]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string _id { get; set; }
+        public string Id { get; set; }
     }
 }
