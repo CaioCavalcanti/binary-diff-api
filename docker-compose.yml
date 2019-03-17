@@ -8,7 +8,9 @@ services:
   input-webapi:
     image: caiocavalcanti/binary-diff-input-webapi:latest
     restart: always
-    build: ./Services/BinaryDiff.Input
+    build: 
+      context: .
+      dockerfile: ./Services/BinaryDiff.Input/Dockerfile
     environment:
       mongo__host: mongodb
       mongo__user: root
@@ -27,8 +29,11 @@ services:
   result-webapi:
     image: caiocavalcanti/binary-diff-result-webapi:latest
     restart: always
-    build: ./Services/BinaryDiff.Result
+    build: 
+      context: .
+      dockerfile: ./Services/BinaryDiff.Result/Dockerfile
     entrypoint: >
+      /app/wait-for-it.sh --strict --timeout=30 postgres:5432 --
       dotnet BinaryDiff.Result.WebApi.dll
     environment:
       ASPNETCORE_URLS: http://+:6000
@@ -36,11 +41,15 @@ services:
       - 6000:6000
     networks:
       - binary-diff-dev
+    depends_on:
+      - postgres
 
   api-gateway:
     image: caiocavalcanti/binary-diff-api-gateway:latest
     restart: always
-    build: ./Apps/BinaryDiff.ApiGateway
+    build: 
+      context: .
+      dockerfile: ./Apps/BinaryDiff.ApiGateway/Dockerfile
     environment:
       ASPNETCORE_URLS: http://+:4000
     entrypoint: >

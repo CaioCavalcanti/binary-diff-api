@@ -4,12 +4,12 @@ EXPOSE 6000
 
 FROM microsoft/dotnet:2.1-sdk AS build
 WORKDIR /src
-COPY ./BinaryDiff.Result.sln .
-COPY ./BinaryDiff.Result.Domain/BinaryDiff.Result.Domain.csproj ./BinaryDiff.Result.Domain/
-COPY ./BinaryDiff.Result.Infrastructure/BinaryDiff.Result.Infrastructure.csproj ./BinaryDiff.Result.Infrastructure/
-COPY ./BinaryDiff.Result.WebApi/BinaryDiff.Result.WebApi.csproj ./BinaryDiff.Result.WebApi/
+COPY ./Services/BinaryDiff.Result/BinaryDiff.Result.sln .
+COPY ./Services/BinaryDiff.Result/BinaryDiff.Result.Domain/BinaryDiff.Result.Domain.csproj ./BinaryDiff.Result.Domain/
+COPY ./Services/BinaryDiff.Result/BinaryDiff.Result.Infrastructure/BinaryDiff.Result.Infrastructure.csproj ./BinaryDiff.Result.Infrastructure/
+COPY ./Services/BinaryDiff.Result/BinaryDiff.Result.WebApi/BinaryDiff.Result.WebApi.csproj ./BinaryDiff.Result.WebApi/
 RUN dotnet restore
-COPY . .
+COPY ./Services/BinaryDiff.Result/ .
 WORKDIR /src/BinaryDiff.Result.WebApi
 RUN dotnet build "BinaryDiff.Result.WebApi.csproj" -c Release -o /app
 
@@ -19,6 +19,6 @@ RUN dotnet publish "BinaryDiff.Result.WebApi.csproj" -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh .
+ADD ./wait-for-it.sh .
 RUN chmod +x wait-for-it.sh
 ENTRYPOINT ["dotnet", "BinaryDiff.Result.WebApi.dll"]

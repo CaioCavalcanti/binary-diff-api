@@ -5,10 +5,38 @@ services:
     image: mongo
     restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=notSoSafePassword
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: notSoSafePassword
     ports:
-      - "27017:27017"
+      - '27017:27017'
     command: mongod --auth    
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - binary-diff-dev
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: notSoSafePassword
+      POSTGRES_DB: BinaryDiffResultDb
+    ports:
+      - 5432:5432
+    networks:
+      - binary-diff-dev
+      
+  postgres-admin:
+    image: fenglc/pgadmin4:2.1 # https://hub.docker.com/r/fenglc/pgadmin4/
+    restart: always
+    volumes:
+      - postgres-admin-data:/var/lib/pgadmin
+    ports:
+      - 5050:5050
+    depends_on:
+      - postgres
+      
+volumes:
+  postgres-data:
+  postgres-admin-data:

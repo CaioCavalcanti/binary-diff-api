@@ -1,11 +1,11 @@
-﻿using BinaryDiff.Input.WebApi.Helpers.Messages;
+﻿using BinaryDiff.Result.WebApi.Helpers.Messages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
-namespace BinaryDiff.Input.WebApi.Helpers
+namespace BinaryDiff.Result.WebApi.Helpers
 {
     /// <summary>
     /// Global exception middleware to ensure all exceptions are logged

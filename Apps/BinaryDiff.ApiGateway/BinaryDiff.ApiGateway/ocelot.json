@@ -1,7 +1,7 @@
 {
   "ReRoutes": [
     {
-      "DownstreamPathTemplate": "/v1/diffs",
+      "DownstreamPathTemplate": "/api/diffs",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -13,7 +13,7 @@
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/v1/diffs/{id}/left",
+      "DownstreamPathTemplate": "/api/diffs/{id}/left",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -25,7 +25,7 @@
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/v1/diffs/{id}/right",
+      "DownstreamPathTemplate": "/api/diffs/{id}/right",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -34,6 +34,30 @@
         }
       ],
       "UpstreamPathTemplate": "/v1/diff/{id}/right",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/diffs/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "result-webapi",
+          "Port": 6000
+        }
+      ],
+      "UpstreamPathTemplate": "/v1/diff/{id}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/diffs/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "result-webapi",
+          "Port": 6000
+        }
+      ],
+      "UpstreamPathTemplate": "/v1/diff/{id}",
       "UpstreamHttpMethod": [ "POST" ]
     }
   ],

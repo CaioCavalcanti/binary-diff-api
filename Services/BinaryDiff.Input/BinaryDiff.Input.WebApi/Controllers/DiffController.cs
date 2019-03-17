@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BinaryDiff.Input.WebApi.Controllers
 {
-    [Route("v1/diffs")]
+    [Route("api/diffs")]
     [ApiController]
     [Produces("application/json")]
     public class DiffController : ControllerBase
