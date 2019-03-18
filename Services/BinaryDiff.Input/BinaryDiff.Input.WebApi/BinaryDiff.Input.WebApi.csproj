@@ -18,11 +18,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\BinaryDiff.Shared\BinaryDiff.Shared.WebApi\BinaryDiff.Shared.WebApi.csproj" />
+    <ProjectReference Include="..\BinaryDiff.Input.Domain\BinaryDiff.Input.Domain.csproj" />
     <ProjectReference Include="..\BinaryDiff.Input.Infrastructure\BinaryDiff.Input.Infrastructure.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
   </PropertyGroup>
 </Project>

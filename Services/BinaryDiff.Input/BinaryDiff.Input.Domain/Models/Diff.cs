@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using BinaryDiff.Shared.Domain.Models;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 
 namespace BinaryDiff.Input.Domain.Models

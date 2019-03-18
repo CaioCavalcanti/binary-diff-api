@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using BinaryDiff.Input.Domain.Enums;
 using BinaryDiff.Input.Domain.Models;
+using BinaryDiff.Input.Infrastructure.EventBus;
 using BinaryDiff.Input.Infrastructure.Repositories;
-using BinaryDiff.Input.WebApi.Helpers.Messages;
+using BinaryDiff.Input.WebApi.IntegrationEvents;
 using BinaryDiff.Input.WebApi.ViewModels;
+using BinaryDiff.Shared.WebApi.ResultMessages;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -20,23 +22,26 @@ namespace BinaryDiff.Input.WebApi.Controllers
         private readonly IDiffRepository _diffRepository;
         private readonly IInputRepository _inputRepository;
         private readonly IMapper _mapper;
+        private readonly IInputEventBus _eventBus;
 
         public DiffController(
             ILogger<DiffController> logger,
             IDiffRepository diffRepository,
             IInputRepository inputRepository,
-            IMapper mapper
+            IMapper mapper,
+            IInputEventBus eventBus
         )
         {
             _logger = logger;
             _diffRepository = diffRepository;
             _inputRepository = inputRepository;
             _mapper = mapper;
+            _eventBus = eventBus;
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(DiffViewModel), 201)]
-        [ProducesResponseType(typeof(ExceptionMessage), 500)]
+        [ProducesResponseType(typeof(ExceptionResultMessage), 500)]
         public async Task<IActionResult> Post()
         {
             _logger.LogDebug("New diff request");
@@ -57,8 +62,8 @@ namespace BinaryDiff.Input.WebApi.Controllers
         [HttpPost("{id}/left")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(typeof(DiffNotFoundMessage), 404)]
-        [ProducesResponseType(typeof(ExceptionMessage), 500)]
+        [ProducesResponseType(typeof(ResourceNotFoundForIdResultMessage<Diff>), 404)]
+        [ProducesResponseType(typeof(ExceptionResultMessage), 500)]
         public async Task<IActionResult> PostLeft([FromRoute]Guid id, [FromBody]InputViewModel input)
         {
             return await HandlePostInputRequest(id, input, InputPosition.Left);
@@ -67,8 +72,8 @@ namespace BinaryDiff.Input.WebApi.Controllers
         [HttpPost("{id}/right")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(typeof(DiffNotFoundMessage), 404)]
-        [ProducesResponseType(typeof(ExceptionMessage), 500)]
+        [ProducesResponseType(typeof(ResourceNotFoundForIdResultMessage<Diff>), 404)]
+        [ProducesResponseType(typeof(ExceptionResultMessage), 500)]
         public async Task<IActionResult> PostRight([FromRoute]Guid id, [FromBody]InputViewModel input)
         {
             return await HandlePostInputRequest(id, input, InputPosition.Right);
@@ -91,13 +96,24 @@ namespace BinaryDiff.Input.WebApi.Controllers
             {
                 _logger.LogWarning($"Find({diffId}): item not found on repository");
 
-                return NotFound(new DiffNotFoundMessage(diffId));
+                return NotFound(new ResourceNotFoundForIdResultMessage<Diff>(diffId));
             }
 
             var newInput = new InputData(diffId, position, input.Data);
 
             _logger.LogDebug($"Save({diffId}, Diff obj): saving item on repository");
+
             await _inputRepository.AddOneAsync(newInput);
+
+            _logger.LogDebug($"Save({diffId}, Diff obj): saving item on repository");
+
+            var eventMessage = new NewInputIntegrationEvent(diffId, newInput.Id, newInput.Timestamp);
+
+            _logger.LogDebug($"Input registered, sending integration event ({eventMessage.Id})");
+
+            _eventBus.Publish(eventMessage);
+
+            _logger.LogDebug($"Integration event ({eventMessage.Id}) sent!");
 
             return Created(diffId.ToString(), null);
         }

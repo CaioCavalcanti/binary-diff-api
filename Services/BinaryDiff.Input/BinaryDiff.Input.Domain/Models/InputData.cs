@@ -1,4 +1,5 @@
 ﻿using BinaryDiff.Input.Domain.Enums;
+using BinaryDiff.Shared.Domain.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
@@ -13,7 +14,7 @@ namespace BinaryDiff.Input.Domain.Models
     {
         public InputData(Guid diff, InputPosition position, string data)
         {
-            Diff = diff;
+            DiffId = diff;
             Position = position;
             Data = data;
             Timestamp = DateTime.UtcNow;
@@ -22,8 +23,8 @@ namespace BinaryDiff.Input.Domain.Models
         /// <summary>
         /// Diff unique ID
         /// </summary>
-        [BsonElement("diff")]
-        public Guid Diff { get; set; }
+        [BsonElement("diffId")]
+        public Guid DiffId { get; set; }
 
         /// <summary>
         /// Timestamp the document was created

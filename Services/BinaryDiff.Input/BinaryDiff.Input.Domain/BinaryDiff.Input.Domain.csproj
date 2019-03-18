@@ -5,7 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" Version="2.8.0" />
+    <PackageReference Include="MongoDB.Bson" Version="2.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BinaryDiff.Shared\BinaryDiff.Shared.Domain\BinaryDiff.Shared.Domain.csproj" />
   </ItemGroup>
 
 </Project>
