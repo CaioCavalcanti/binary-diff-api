@@ -8,7 +8,7 @@ services:
   input-webapi:
     image: caiocavalcanti/binary-diff-input-webapi:latest
     restart: always
-    build: 
+    build:
       context: .
       dockerfile: ./Services/BinaryDiff.Input/Dockerfile
     environment:
@@ -18,6 +18,7 @@ services:
       ASPNETCORE_URLS: http://+:5000
     entrypoint: >
       /app/wait-for-it.sh --strict --timeout=30 mongodb:27017 --
+      /app/wait-for-it.sh --strict --timeout=30 rabbitmq:5672 --
       dotnet BinaryDiff.Input.WebApi.dll
     ports:
       - 5000:5000
@@ -25,41 +26,41 @@ services:
       - binary-diff-dev
     depends_on:
       - mongodb
+      - rabbitmq
 
-  result-webapi:
-    image: caiocavalcanti/binary-diff-result-webapi:latest
-    restart: always
-    build: 
-      context: .
-      dockerfile: ./Services/BinaryDiff.Result/Dockerfile
-    entrypoint: >
-      /app/wait-for-it.sh --strict --timeout=30 postgres:5432 --
-      dotnet BinaryDiff.Result.WebApi.dll
-    environment:
-      ASPNETCORE_URLS: http://+:6000
-    ports:
-      - 6000:6000
-    networks:
-      - binary-diff-dev
-    depends_on:
-      - postgres
+  # result-webapi:
+  #   image: caiocavalcanti/binary-diff-result-webapi:latest
+  #   restart: always
+  #   build:
+  #     context: .
+  #     dockerfile: ./Services/BinaryDiff.Result/Dockerfile
+  #   entrypoint: >
+  #     /app/wait-for-it.sh --strict --timeout=30 postgres:5432 --
+  #     dotnet BinaryDiff.Result.WebApi.dll
+  #   environment:
+  #     ASPNETCORE_URLS: http://+:6000
+  #   ports:
+  #     - 6000:6000
+  #   networks:
+  #     - binary-diff-dev
+  #   depends_on:
+  #     - postgres
 
   api-gateway:
     image: caiocavalcanti/binary-diff-api-gateway:latest
     restart: always
-    build: 
+    build:
       context: .
       dockerfile: ./Apps/BinaryDiff.ApiGateway/Dockerfile
     environment:
       ASPNETCORE_URLS: http://+:4000
     entrypoint: >
       /app/wait-for-it.sh --strict --timeout=30 input-webapi:5000 --
-      /app/wait-for-it.sh --strict --timeout=30 result-webapi:6000 --
       dotnet BinaryDiff.ApiGateway.dll
     ports:
       - 4000:4000
     depends_on:
       - input-webapi
-      - result-webapi
+      # - result-webapi
     networks:
       - binary-diff-dev
