@@ -4,11 +4,12 @@ EXPOSE 4000
 
 FROM microsoft/dotnet:2.1-sdk AS build
 WORKDIR /src
+
 COPY ./Apps/BinaryDiff.ApiGateway/BinaryDiff.ApiGateway.sln .
-COPY ./Apps/BinaryDiff.ApiGateway/BinaryDiff.ApiGateway/BinaryDiff.ApiGateway.csproj ./BinaryDiff.ApiGateway/
+COPY ./Apps/BinaryDiff.ApiGateway/BinaryDiff.ApiGateway.csproj .
+
 RUN dotnet restore
 COPY ./Apps/BinaryDiff.ApiGateway/ .
-WORKDIR /src/BinaryDiff.ApiGateway
 RUN dotnet build "BinaryDiff.ApiGateway.csproj" -c Release -o /app
 
 FROM build AS publish
