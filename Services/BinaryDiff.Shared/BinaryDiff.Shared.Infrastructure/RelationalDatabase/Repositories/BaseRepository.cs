@@ -1,22 +1,20 @@
-﻿using BinaryDiff.Result.Domain.Models;
+﻿using BinaryDiff.Shared.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace BinaryDiff.Result.Infrastructure.Repositories.Implementation
+namespace BinaryDiff.Shared.Infrastructure.RelationalDatabase.Repositories
 {
     public class BaseRepository<T> : IBaseRepository<T>
-        where T : BaseModel
+        where T : BaseEntity
     {
-        private readonly IUnitOfWork _uow;
         protected readonly DbSet<T> dbSet;
 
-        public BaseRepository(IUnitOfWork uow)
+        public BaseRepository(DbContext context)
         {
-            _uow = uow;
-            dbSet = _uow.Context.Set<T>();
+            dbSet = context.Set<T>();
         }
 
         public void Add(T entity)
@@ -32,11 +30,6 @@ namespace BinaryDiff.Result.Infrastructure.Repositories.Implementation
         public IQueryable<T> Get(Expression<Func<T, bool>> predicate = null)
         {
             return dbSet.Where(predicate).AsQueryable();
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _uow.SaveChangesAsync();
         }
     }
 }

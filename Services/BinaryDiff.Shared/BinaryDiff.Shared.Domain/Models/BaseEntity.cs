@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace BinaryDiff.Result.Domain.Models
+namespace BinaryDiff.Shared.Domain.Models
 {
-    public class BaseModel
+    public class BaseEntity
     {
         public Guid Id { get; set; }
     }

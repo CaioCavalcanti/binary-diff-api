@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\BinaryDiff.Shared\BinaryDiff.Shared.Infrastructure\BinaryDiff.Shared.Infrastructure.csproj" />
     <ProjectReference Include="..\BinaryDiff.Result.Domain\BinaryDiff.Result.Domain.csproj" />
   </ItemGroup>
 

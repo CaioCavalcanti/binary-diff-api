@@ -2,7 +2,7 @@
 using BinaryDiff.Shared.Infrastructure.MongoDb.Context;
 using BinaryDiff.Shared.Infrastructure.MongoDb.Repositories;
 
-namespace BinaryDiff.Input.Infrastructure.Repositories.Implementation
+namespace BinaryDiff.Input.Infrastructure.Repositories
 {
     public class InputRepository : MongoDbRepository<InputData>, IInputRepository
     {

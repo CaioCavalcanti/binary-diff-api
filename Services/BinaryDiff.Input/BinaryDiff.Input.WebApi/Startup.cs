@@ -1,7 +1,6 @@
 ﻿using BinaryDiff.Input.Infrastructure.EventBus;
 using BinaryDiff.Input.Infrastructure.EventBus.Implementation;
 using BinaryDiff.Input.Infrastructure.Repositories;
-using BinaryDiff.Input.Infrastructure.Repositories.Implementation;
 using BinaryDiff.Shared.WebApi.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

@@ -1,12 +1,11 @@
-﻿using BinaryDiff.Result.Infrastructure.Database;
-using System.Threading.Tasks;
+﻿using BinaryDiff.Shared.Infrastructure.RelationalDatabase;
 
 namespace BinaryDiff.Result.Infrastructure.Repositories
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork : IBaseUnitOfWork
     {
-        ResultContext Context { get; }
+        IDiffResultsRepository DiffResultsRepository { get; }
 
-        Task SaveChangesAsync();
+        IInputDifferencesRepository InputDifferencesRepository { get; }
     }
 }

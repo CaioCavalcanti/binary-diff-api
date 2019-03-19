@@ -1,10 +1,11 @@
 ﻿using BinaryDiff.Result.Domain.Enums;
+using BinaryDiff.Shared.Domain.Models;
 using System;
 using System.Collections.Generic;
 
 namespace BinaryDiff.Result.Domain.Models
 {
-    public class DiffResult : BaseModel
+    public class DiffResult : BaseEntity
     {
         public Guid DiffId { get; set; }
 

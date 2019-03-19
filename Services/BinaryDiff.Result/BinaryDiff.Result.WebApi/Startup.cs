@@ -1,22 +1,19 @@
-﻿using AutoMapper;
-using BinaryDiff.Result.Infrastructure.Database;
+﻿using BinaryDiff.Result.Infrastructure.Database;
 using BinaryDiff.Result.Infrastructure.Repositories;
-using BinaryDiff.Result.Infrastructure.Repositories.Implementation;
-using BinaryDiff.Result.WebApi.Helpers;
+using BinaryDiff.Shared.WebApi.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
-using System;
-using System.IO;
-using System.Reflection;
 
 namespace BinaryDiff.Result.WebApi
 {
     public class Startup
     {
+        const string API_NAME = "BinaryDiff.Result Web API";
+        const string API_VERSION = "v1";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -28,74 +25,22 @@ namespace BinaryDiff.Result.WebApi
         {
             services
                 .AddMvc()
-                .AddJsonOptions(opt =>
-                {
-                    opt.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-                    opt.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
-                });
+                .ConfigureJsonSerializerSettings();
+
+            services
+                .ConfigureSwagger<Startup>(API_NAME, API_VERSION)
+                .UseAutoMapper();
 
             ConfigureDatabase(services);
-            ConfigureSwagger(services);
-            ConfigureAutoMapper(services);
-            ConfigureIoC(services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            ConfigureSwagger(app);
+            RunMigrations(app);
 
-            app.UseMiddleware<ExceptionHandlerMiddleware>();
-
-            app.UseMvc();
-        }
-
-        private void ConfigureIoC(IServiceCollection services)
-        {
-            services
-                .AddScoped<IUnitOfWork, UnitOfWork>()
-                .AddScoped<IDiffResultRepository, DiffResultRepository>();
-        }
-
-        private void ConfigureSwagger(IServiceCollection services)
-        {
-            services.AddSwaggerGen(cfg =>
-            {
-                cfg.SwaggerDoc("v1", new Info
-                {
-                    Title = "BinaryDiff.Result Web API v1",
-                    Version = "v1",
-                    Contact = new Contact
-                    {
-                        Name = "Caio Cavalcanti",
-                        Email = "caiofabiomc@gmail.com",
-                        Url = "https://github.com/CaioCavalcanti/binary-diff-api"
-                    }
-                });
-
-                // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                cfg.IncludeXmlComments(xmlPath);
-            });
-        }
-
-        private void ConfigureSwagger(IApplicationBuilder app)
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI(cfg =>
-            {
-                cfg.SwaggerEndpoint("/swagger/v1/swagger.json", "BinaryDiff.Result Web API v1");
-                cfg.RoutePrefix = string.Empty;
-            });
-        }
-
-        private void ConfigureAutoMapper(IServiceCollection services)
-        {
-            Mapper.Initialize(cfg => { });
-
-            services.AddAutoMapper();
-
-            Mapper.AssertConfigurationIsValid();
+            app.UseDefaultExceptionHandler()
+               .UseSwagger(API_NAME, API_VERSION)
+               .UseMvc();
         }
 
         private void ConfigureDatabase(IServiceCollection services)
@@ -106,7 +51,17 @@ namespace BinaryDiff.Result.WebApi
                 .AddEntityFrameworkNpgsql()
                 .AddDbContext<ResultContext>(
                     options => options.UseNpgsql(connectionString)
-                );
+                )
+                .AddScoped<IUnitOfWork, UnitOfWork>(); ;
+        }
+
+        private void RunMigrations(IApplicationBuilder app)
+        {
+            using (var theServiceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var resultDbContext = theServiceScope.ServiceProvider.GetService<ResultContext>();
+                resultDbContext.Database.Migrate();
+            }
         }
     }
 }

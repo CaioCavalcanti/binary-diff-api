@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\BinaryDiff.Shared\BinaryDiff.Shared.WebApi\BinaryDiff.Shared.WebApi.csproj" />
     <ProjectReference Include="..\BinaryDiff.Result.Infrastructure\BinaryDiff.Result.Infrastructure.csproj" />
   </ItemGroup>
 

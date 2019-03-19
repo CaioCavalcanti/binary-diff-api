@@ -1,8 +1,9 @@
-﻿using System;
+﻿using BinaryDiff.Shared.Domain.Models;
+using System;
 
 namespace BinaryDiff.Result.Domain.Models
 {
-    public class InputDifference : BaseModel
+    public class InputDifference : BaseEntity
     {
         public InputDifference()
         {

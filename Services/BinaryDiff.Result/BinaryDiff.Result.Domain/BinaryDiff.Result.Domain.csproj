@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\BinaryDiff.Shared\BinaryDiff.Shared.Domain\BinaryDiff.Shared.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

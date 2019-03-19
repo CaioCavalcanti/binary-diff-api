@@ -2,8 +2,8 @@
 using BinaryDiff.Result.Domain.Enums;
 using BinaryDiff.Result.Domain.Models;
 using BinaryDiff.Result.Infrastructure.Repositories;
-using BinaryDiff.Result.WebApi.Helpers.Messages;
 using BinaryDiff.Result.WebApi.ViewModels;
+using BinaryDiff.Shared.WebApi.ResultMessages;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -17,24 +17,24 @@ namespace BinaryDiff.Result.WebApi.Controllers
     {
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IDiffResultRepository _resultRepository;
+        private readonly IUnitOfWork _uow;
 
         public DiffController(
             ILogger<DiffController> logger,
             IMapper mapper,
-            IDiffResultRepository resultRepository
+            IUnitOfWork uow
         )
         {
             _logger = logger;
             _mapper = mapper;
-            _resultRepository = resultRepository;
+            _uow = uow;
         }
 
         [HttpGet("{diffId}")]
         [ProducesResponseType(typeof(DiffResultViewModel), 200)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(typeof(ResultNotFoundMessage), 404)]
-        [ProducesResponseType(typeof(ExceptionMessage), 500)]
+        [ProducesResponseType(typeof(ResourceNotFoundForIdResultMessage<DiffResult>), 404)]
+        [ProducesResponseType(typeof(ExceptionResultMessage), 500)]
         public async Task<IActionResult> GetLastResultAsync([FromRoute]Guid diffId)
         {
             _logger.LogDebug($"Request to get last result for {diffId}");
@@ -48,13 +48,13 @@ namespace BinaryDiff.Result.WebApi.Controllers
 
             _logger.LogDebug($"Getting last result {diffId} on repository");
 
-            var result = await _resultRepository.GetLastResultForDiffAsync(diffId);
+            var result = await _uow.DiffResultsRepository.GetLastResultForDiffAsync(diffId);
 
             if (result == null)
             {
                 _logger.LogInformation($"None result found for {diffId}");
 
-                return NotFound(new ResultNotFoundMessage(diffId));
+                return NotFound(new ResourceNotFoundForIdResultMessage<DiffResult>(diffId));
             }
 
             _logger.LogDebug($"Found result {result.Id} for {diffId}");
@@ -67,8 +67,8 @@ namespace BinaryDiff.Result.WebApi.Controllers
         [HttpPost("{diffId}")]
         [ProducesResponseType(typeof(NewDiffResultViewModel), 201)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(typeof(ResultNotFoundMessage), 404)]
-        [ProducesResponseType(typeof(ExceptionMessage), 500)]
+        [ProducesResponseType(typeof(ResourceNotFoundForIdResultMessage<DiffResult>), 404)]
+        [ProducesResponseType(typeof(ExceptionResultMessage), 500)]
         public async Task<IActionResult> PostResultAsync([FromRoute]Guid diffId, [FromBody]NewDiffResultViewModel newResult)
         {
             _logger.LogDebug($"Request to add result for {diffId}");
@@ -95,8 +95,9 @@ namespace BinaryDiff.Result.WebApi.Controllers
             var result = _mapper.Map<DiffResult>(newResult);
             result.DiffId = diffId;
 
-            _resultRepository.Add(result);
-            await _resultRepository.SaveChangesAsync();
+            _uow.DiffResultsRepository.Add(result);
+
+            await _uow.SaveChangesAsync();
 
             _logger.LogDebug($"Result added for {diffId}: {result.Id}");
 
