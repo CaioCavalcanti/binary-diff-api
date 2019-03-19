@@ -3,7 +3,7 @@ using BinaryDiff.Shared.Infrastructure.RabbitMQ.Connections;
 using BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus;
 using Microsoft.Extensions.Logging;
 
-namespace BinaryDiff.Input.Infrastructure.EventBus.Implementation
+namespace BinaryDiff.Input.Infrastructure.EventBus
 {
     public class InputEventBus : RabbitMQEventBus, IInputEventBus
     {

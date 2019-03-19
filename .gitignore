@@ -262,3 +262,6 @@ __pycache__/
 
 # Coverage results
 coverage.json
+
+# Data
+data/

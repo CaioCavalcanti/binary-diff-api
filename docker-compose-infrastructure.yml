@@ -9,9 +9,9 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: notSoSafePassword
     ports:
       - '27017:27017'
-    command: mongod --auth    
+    command: mongod --auth
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - mongo-data:/var/data/mongo
     networks:
       - binary-diff-dev
 
@@ -22,23 +22,10 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: notSoSafePassword
       POSTGRES_DB: BinaryDiffResultDb
+    volumes:
+      - postgres-data:/var/data/postgres
     ports:
       - 5432:5432
-    networks:
-      - binary-diff-dev
-      
-  postgres-admin:
-    image: fenglc/pgadmin4:2.1
-    restart: always
-    environment:
-      DEFAULT_USER: pgadmin4@pgadmin.org
-      DEFAULT_PASSWORD: admin
-    volumes:
-      - postgres-admin-data:/var/lib/pgadmin
-    ports:
-      - 5050:5050
-    depends_on:
-      - postgres
     networks:
       - binary-diff-dev
 
@@ -47,7 +34,7 @@ services:
     restart: always
     hostname: rabbitmq-host
     volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
+      - rabbitmq-data:/var/data/rabbitmq/
     ports:
       - 5672:5672
       - 15672:15672
@@ -55,6 +42,6 @@ services:
       - binary-diff-dev
       
 volumes:
+  mongo-data:
   postgres-data:
-  postgres-admin-data:
   rabbitmq-data:

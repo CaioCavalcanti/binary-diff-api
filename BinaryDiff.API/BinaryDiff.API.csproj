@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BinaryDiff.Domain\BinaryDiff.Domain.csproj" />
     <ProjectReference Include="..\BinaryDiff.Infrastructure\BinaryDiff.Infrastructure.csproj" />
   </ItemGroup>
 

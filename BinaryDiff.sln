@@ -3,13 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.API", "BinaryDiff.API\BinaryDiff.API.csproj", "{DC1BD04F-8FD3-4AFA-A153-05169A2DD948}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Infrastructure", "BinaryDiff.Infrastructure\BinaryDiff.Infrastructure.csproj", "{BEABCC46-7260-41EF-9EE5-32E177349163}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Tests", "BinaryDiff.Tests\BinaryDiff.Tests.csproj", "{E6809788-274D-4454-84C6-F8A788597F2A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Domain", "BinaryDiff.Domain\BinaryDiff.Domain.csproj", "{62AE1AC9-DC20-48D5-832F-5F14EA15C4AD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{B080A25C-4EC5-4D18-B0BF-B9221CDF5C79}"
 EndProject
@@ -47,15 +41,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Worker.Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{860703B1-6EE0-4612-B0FA-A11097C4266F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Shared.Infrastructure", "Services\BinaryDiff.Shared\BinaryDiff.Shared.Infrastructure\BinaryDiff.Shared.Infrastructure.csproj", "{92D7DC8F-3B9E-4C95-AB52-3841A9C4E37A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Shared.Infrastructure", "Services\BinaryDiff.Shared\BinaryDiff.Shared.Infrastructure\BinaryDiff.Shared.Infrastructure.csproj", "{92D7DC8F-3B9E-4C95-AB52-3841A9C4E37A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Shared.WebApi", "Services\BinaryDiff.Shared\BinaryDiff.Shared.WebApi\BinaryDiff.Shared.WebApi.csproj", "{A7A22F47-5430-4261-AAFB-DD56E596817E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Shared.WebApi", "Services\BinaryDiff.Shared\BinaryDiff.Shared.WebApi\BinaryDiff.Shared.WebApi.csproj", "{A7A22F47-5430-4261-AAFB-DD56E596817E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Input.Domain", "Services\BinaryDiff.Input\BinaryDiff.Input.Domain\BinaryDiff.Input.Domain.csproj", "{BE862205-A927-4A3C-A609-3FF9537B78EE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Input.WebApi", "Services\BinaryDiff.Input\BinaryDiff.Input.WebApi\BinaryDiff.Input.WebApi.csproj", "{5173D8E4-6CDC-4B57-B253-4586FFADAD57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Shared.Domain", "Services\BinaryDiff.Shared\BinaryDiff.Shared.Domain\BinaryDiff.Shared.Domain.csproj", "{7E47F309-BE85-4FC6-AF31-53F4E2DC8122}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Shared.Domain", "Services\BinaryDiff.Shared\BinaryDiff.Shared.Domain\BinaryDiff.Shared.Domain.csproj", "{7E47F309-BE85-4FC6-AF31-53F4E2DC8122}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,22 +57,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DC1BD04F-8FD3-4AFA-A153-05169A2DD948}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC1BD04F-8FD3-4AFA-A153-05169A2DD948}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC1BD04F-8FD3-4AFA-A153-05169A2DD948}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC1BD04F-8FD3-4AFA-A153-05169A2DD948}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BEABCC46-7260-41EF-9EE5-32E177349163}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BEABCC46-7260-41EF-9EE5-32E177349163}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BEABCC46-7260-41EF-9EE5-32E177349163}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BEABCC46-7260-41EF-9EE5-32E177349163}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E6809788-274D-4454-84C6-F8A788597F2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E6809788-274D-4454-84C6-F8A788597F2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6809788-274D-4454-84C6-F8A788597F2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6809788-274D-4454-84C6-F8A788597F2A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{62AE1AC9-DC20-48D5-832F-5F14EA15C4AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{62AE1AC9-DC20-48D5-832F-5F14EA15C4AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{62AE1AC9-DC20-48D5-832F-5F14EA15C4AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{62AE1AC9-DC20-48D5-832F-5F14EA15C4AD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{83D6F276-6532-4DEC-A546-F21822B25FC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{83D6F276-6532-4DEC-A546-F21822B25FC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83D6F276-6532-4DEC-A546-F21822B25FC5}.Release|Any CPU.ActiveCfg = Release|Any CPU

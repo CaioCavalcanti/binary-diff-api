@@ -30,7 +30,7 @@ Assumptions were taken on how to implement this PoC, you can check it at the end
 The project was built to run on Docker (~~because runs on my machine is not an excuse~~), so you just need to execute the command below on the repo:
 
 ```
-$ docker-compose up
+$ docker-compose -f docker-compose.yml -f docker-compose-infrastructure.yml up --build
 ```
 
 As soon as it finishes building the container, the service will be available on `http://localhost:8000/v1/<RESOURCE_PATH>` (you can configure a different port on `Dockerfile` if needed).

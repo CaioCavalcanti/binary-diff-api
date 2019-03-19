@@ -5,6 +5,26 @@ networks:
     driver: bridge
 
 services:
+  worker-app:
+    image: caiocavalcanti/binary-diff-worker-app:latest
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Services/BinaryDiff.Worker/Dockerfile
+    environment:
+      mongodb__host: mongodb
+      mongodb__user: root
+      mongodb__password: notSoSafePassword
+    entrypoint: >
+      /app/wait-for-it.sh --strict --timeout=30 mongodb:27017 --
+      /app/wait-for-it.sh --strict --timeout=30 rabbitmq:5672 --
+      dotnet BinaryDiff.Worker.App.dll
+    networks:
+      - binary-diff-dev
+    depends_on:
+      - mongodb
+      - rabbitmq
+
   input-webapi:
     image: caiocavalcanti/binary-diff-input-webapi:latest
     restart: always
@@ -12,9 +32,9 @@ services:
       context: .
       dockerfile: ./Services/BinaryDiff.Input/Dockerfile
     environment:
-      mongo__host: mongodb
-      mongo__user: root
-      mongo__password: notSoSafePassword
+      mongodb__host: mongodb
+      mongodb__user: root
+      mongodb__password: notSoSafePassword
       ASPNETCORE_URLS: http://+:5000
     entrypoint: >
       /app/wait-for-it.sh --strict --timeout=30 mongodb:27017 --
@@ -25,8 +45,7 @@ services:
     networks:
       - binary-diff-dev
     depends_on:
-      - mongodb
-      - rabbitmq
+      - worker-app
 
   result-webapi:
     image: caiocavalcanti/binary-diff-result-webapi:latest
@@ -45,6 +64,7 @@ services:
       - binary-diff-dev
     depends_on:
       - postgres
+      - worker-app
 
   api-gateway:
     image: caiocavalcanti/binary-diff-api-gateway:latest
@@ -63,5 +83,6 @@ services:
     depends_on:
       - input-webapi
       - result-webapi
+      - worker-app
     networks:
       - binary-diff-dev

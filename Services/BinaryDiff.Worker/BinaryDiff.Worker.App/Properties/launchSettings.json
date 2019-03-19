@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "BinaryDiff.Worker.App": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

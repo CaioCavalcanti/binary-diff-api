@@ -22,12 +22,6 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\BinaryDiff.API\BinaryDiff.API.csproj" />
-    <ProjectReference Include="..\BinaryDiff.Domain\BinaryDiff.Domain.csproj" />
-    <ProjectReference Include="..\BinaryDiff.Infrastructure\BinaryDiff.Infrastructure.csproj" />
-  </ItemGroup>
-
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>

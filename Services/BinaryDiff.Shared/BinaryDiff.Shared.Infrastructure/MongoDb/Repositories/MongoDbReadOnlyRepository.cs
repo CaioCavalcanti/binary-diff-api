@@ -16,13 +16,18 @@ namespace BinaryDiff.Shared.Infrastructure.MongoDb.Repositories
         {
         }
 
-        public async Task<IList<TDocument>> FindAsync(Expression<Func<TDocument, bool>> predicate)
+        public Task<List<TDocument>> FindAsync(Expression<Func<TDocument, bool>> predicate)
         {
-            var filter = new FilterDefinitionBuilder<TDocument>().Where(predicate);
+            return collection
+                .Find(predicate)
+                .ToListAsync();
+        }
 
-            var result = await collection.FindAsync(filter);
-
-            return result.ToList();
+        public Task<TDocument> FindAsync(string id)
+        {
+            return collection
+                .Find(document => document.Id == id)
+                .FirstOrDefaultAsync();
         }
     }
 }

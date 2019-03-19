@@ -9,6 +9,8 @@ namespace BinaryDiff.Shared.Infrastructure.MongoDb.Repositories
     public interface IMongoDbReadOnlyRepository<TDocument>
         where TDocument : BaseDocument
     {
-        Task<IList<TDocument>> FindAsync(Expression<Func<TDocument, bool>> predicate);
+        Task<TDocument> FindAsync(string id);
+
+        Task<List<TDocument>> FindAsync(Expression<Func<TDocument, bool>> predicate);
     }
 }

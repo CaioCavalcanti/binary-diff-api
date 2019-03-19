@@ -30,6 +30,26 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
             _exchangeType = type;
         }
 
+        public IModel CreateChannel(string queueName)
+        {
+            if (!_persistentConnection.IsConnected)
+            {
+                _persistentConnection.TryConnect();
+            }
+
+            var channel = _persistentConnection.CreateModel();
+
+            channel.ExchangeDeclare(
+                exchange: _exchangeName,
+                type: Enum.GetName(typeof(RabbitMQExchangeType), _exchangeType).ToLower());
+
+            channel.QueueBind(queue: queueName,
+                              exchange: _exchangeName,
+                              routingKey: queueName);
+
+            return channel;
+        }
+
         public void Publish<TEvent>(TEvent @event)
             where TEvent : IntegrationEvent
         {
