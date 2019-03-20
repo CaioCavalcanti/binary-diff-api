@@ -1,4 +1,4 @@
-﻿using BinaryDiff.Shared.Infrastructure.RabbitMQ;
+﻿using BinaryDiff.Shared.Infrastructure.RabbitMQ.Events;
 using System;
 
 namespace BinaryDiff.Input.WebApi.IntegrationEvents

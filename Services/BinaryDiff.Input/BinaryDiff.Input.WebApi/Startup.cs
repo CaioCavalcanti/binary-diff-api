@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace BinaryDiff.Input.WebApi
 {
@@ -20,20 +21,21 @@ namespace BinaryDiff.Input.WebApi
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services
                 .AddMvc()
                 .ConfigureJsonSerializerSettings();
 
-            services
+            return services
                 .ConfigureSwagger<Startup>(API_NAME, API_VERSION)
                 .UseMongoDb(Configuration)
                     .AddSingleton<IDiffRepository, DiffRepository>()
                     .AddSingleton<IInputRepository, InputRepository>()
                 .UseRabbitMQ(Configuration)
                     .AddSingleton<IInputEventBus, InputEventBus>()
-                .UseAutoMapper();
+                .UseAutoMapper()
+                .UseAutoFacServiceProvider();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

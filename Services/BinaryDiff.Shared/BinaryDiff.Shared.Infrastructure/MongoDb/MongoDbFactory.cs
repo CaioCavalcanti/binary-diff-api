@@ -7,7 +7,7 @@ namespace BinaryDiff.Shared.Infrastructure.MongoDb
 {
     public static class MongoDbFactory
     {
-        public static IMongoDatabase GetDatabase(MongoConfiguration mongoConfig)
+        public static IMongoClient GetClient(MongoConfiguration mongoConfig)
         {
             if (mongoConfig == null) throw new ArgumentNullException(nameof(mongoConfig));
 
@@ -21,9 +21,7 @@ namespace BinaryDiff.Shared.Infrastructure.MongoDb
                 Server = new MongoServerAddress(mongoConfig.Host, mongoConfig.Port)
             };
 
-            var client = new MongoClient(clientSettings);
-
-            return client.GetDatabase(mongoConfig.Database);
+            return new MongoClient(clientSettings);
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using BinaryDiff.Shared.Infrastructure.RabbitMQ;
+﻿using BinaryDiff.Shared.Infrastructure.RabbitMQ.Events;
 using BinaryDiff.Worker.Domain.Enums;
 using System;
 
-namespace BinaryDiff.Worker.App.IntegrationEvents
+namespace BinaryDiff.Worker.App.Events.IntegrationEvents
 {
     public class NewInputIntegrationEvent : IntegrationEvent
     {

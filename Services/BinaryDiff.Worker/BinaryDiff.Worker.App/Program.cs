@@ -1,4 +1,5 @@
-﻿using BinaryDiff.Shared.WebApi.Extensions;
+﻿using Autofac.Extensions.DependencyInjection;
+using BinaryDiff.Shared.WebApi.Extensions;
 using BinaryDiff.Worker.Domain.Logic;
 using BinaryDiff.Worker.Infrastructure.EventBus;
 using BinaryDiff.Worker.Infrastructure.Repositories;
@@ -36,7 +37,7 @@ namespace BinaryDiff.Worker.App
             Console.ReadLine();
         }
 
-        private static ServiceProvider ConfigureServices()
+        private static AutofacServiceProvider ConfigureServices()
         {
             return new ServiceCollection()
                 .AddLogging(logging => logging.UseDefault())
@@ -47,7 +48,7 @@ namespace BinaryDiff.Worker.App
                     .AddSingleton<IInputEventBus, InputEventBus>()
                     .AddSingleton<IResultEventBus, ResultEventBus>()
                 .AddTransient<Worker>()
-                .BuildServiceProvider();
+                .UseAutoFacServiceProvider();
         }
 
         private static void BuildHost()

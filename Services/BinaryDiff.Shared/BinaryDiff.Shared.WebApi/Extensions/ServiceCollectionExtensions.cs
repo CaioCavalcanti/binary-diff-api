@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using BinaryDiff.Shared.Infrastructure.Configuration;
 using BinaryDiff.Shared.Infrastructure.MongoDb.Context;
 using BinaryDiff.Shared.Infrastructure.RabbitMQ.Connections;
@@ -61,6 +63,15 @@ namespace BinaryDiff.Shared.WebApi.Extensions
                 .AddOptions()
                 .Configure<RabbitMQConfiguration>(rabbitMQConfig)
                 .AddSingleton<IRabbitMQPersistentConnection, RabbitMQPersistentConnection>();
+        }
+
+        public static AutofacServiceProvider UseAutoFacServiceProvider(this IServiceCollection services)
+        {
+            var container = new ContainerBuilder();
+
+            container.Populate(services);
+
+            return new AutofacServiceProvider(container.Build());
         }
     }
 }

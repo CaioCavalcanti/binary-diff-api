@@ -5,7 +5,7 @@ namespace BinaryDiff.Worker.Domain.Logic
 {
     public interface IDiffLogic
     {
-        DiffResult CompareData(string left, string right);
+        DiffResult CompareData(InputData input, InputData opposingInput);
 
         InputPosition GetOpposingPosition(InputPosition position);
     }

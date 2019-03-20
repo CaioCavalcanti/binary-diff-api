@@ -1,10 +1,10 @@
-﻿using BinaryDiff.Shared.Infrastructure.RabbitMQ;
+﻿using BinaryDiff.Shared.Infrastructure.RabbitMQ.Events;
 using BinaryDiff.Worker.Domain.Enums;
 using BinaryDiff.Worker.Domain.Models;
 using System;
 using System.Collections.Generic;
 
-namespace BinaryDiff.Worker.App.IntegrationEvents
+namespace BinaryDiff.Worker.App.Events.IntegrationEvents
 {
     public class NewResultIntegrationEvent : IntegrationEvent
     {

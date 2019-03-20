@@ -7,6 +7,21 @@ namespace BinaryDiff.Worker.Domain.Logic
 {
     public class DiffLogic : IDiffLogic
     {
+        public DiffResult CompareData(InputData input, InputData opposingInput)
+        {
+            var left = GetInputOnPosition(InputPosition.Left, input, opposingInput);
+            var right = GetInputOnPosition(InputPosition.Right, input, opposingInput);
+
+            return CompareData(left?.Data, right?.Data);
+        }
+
+        public InputPosition GetOpposingPosition(InputPosition position)
+        {
+            return position == InputPosition.Left
+                   ? InputPosition.Right
+                   : InputPosition.Left;
+        }
+
         public DiffResult CompareData(string left, string right)
         {
             Dictionary<int, int> differences = null;
@@ -30,11 +45,9 @@ namespace BinaryDiff.Worker.Domain.Logic
             return new DiffResult(result, differences);
         }
 
-        public InputPosition GetOpposingPosition(InputPosition position)
+        private InputData GetInputOnPosition(InputPosition position, InputData input, InputData opposingInput)
         {
-            return position == InputPosition.Left
-                   ? InputPosition.Right
-                   : InputPosition.Left;
+            return input.Position == position ? input : opposingInput;
         }
     }
 }

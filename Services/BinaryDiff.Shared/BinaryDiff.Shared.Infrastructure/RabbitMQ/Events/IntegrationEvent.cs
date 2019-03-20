@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BinaryDiff.Shared.Infrastructure.RabbitMQ
+namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.Events
 {
     public class IntegrationEvent
     {
