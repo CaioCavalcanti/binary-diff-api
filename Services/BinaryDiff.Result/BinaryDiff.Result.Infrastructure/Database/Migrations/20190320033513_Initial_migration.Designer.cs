@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BinaryDiff.Result.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(ResultContext))]
-    [Migration("20190317200442_initial_migration")]
-    partial class initial_migration
+    [Migration("20190320033513_Initial_migration")]
+    partial class Initial_migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,10 +28,17 @@ namespace BinaryDiff.Result.Infrastructure.Database.Migrations
 
                     b.Property<Guid>("DiffId");
 
+                    b.Property<string>("OpposingInputId");
+
                     b.Property<int>("Result");
 
                     b.Property<DateTime>("Timestamp")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("TriggerInputId")
+                        .IsRequired();
+
+                    b.Property<int>("TriggerInputPosition");
 
                     b.HasKey("Id");
 

@@ -1,8 +1,8 @@
-﻿using BinaryDiff.Shared.Infrastructure.RabbitMQ.Events;
+﻿using BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus;
+using BinaryDiff.Shared.Infrastructure.RabbitMQ.Events;
 using BinaryDiff.Worker.App.Events.IntegrationEvents;
 using BinaryDiff.Worker.Domain.Logic;
 using BinaryDiff.Worker.Domain.Models;
-using BinaryDiff.Worker.Infrastructure.EventBus;
 using BinaryDiff.Worker.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,19 +13,19 @@ namespace BinaryDiff.Worker.App.Events.IntegrationEventHandlers
     public class NewInputIntegrationEventHandler : IIntegrationEventHandler<NewInputIntegrationEvent>
     {
         private readonly ILogger _logger;
-        private readonly IResultEventBus _resultEventBus;
+        private readonly IRabbitMQEventBus _eventBus;
         private readonly IInputRepository _inputRepository;
         private readonly IDiffLogic _logic;
 
         public NewInputIntegrationEventHandler(
-            ILogger logger,
-            IResultEventBus resultEventBus,
+            ILogger<NewInputIntegrationEventHandler> logger,
+            IRabbitMQEventBus eventBus,
             IInputRepository inputRepository,
             IDiffLogic logic
         )
         {
             _logger = logger;
-            _resultEventBus = resultEventBus;
+            _eventBus = eventBus;
             _inputRepository = inputRepository;
             _logic = logic;
         }
@@ -38,7 +38,7 @@ namespace BinaryDiff.Worker.App.Events.IntegrationEventHandlers
 
                 var diffResult = _logic.CompareData(input, opposingInput);
 
-                PublishNewResult(input, opposingInput.Id, diffResult);
+                PublishNewResult(input, opposingInput?.Id, diffResult);
             }
             catch (Exception ex)
             {
@@ -68,7 +68,7 @@ namespace BinaryDiff.Worker.App.Events.IntegrationEventHandlers
         {
             var newResult = new NewResultIntegrationEvent(input, oppsingInputId, diffResult);
 
-            _resultEventBus.Publish(newResult);
+            _eventBus.Publish(newResult);
         }
     }
 }

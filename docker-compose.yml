@@ -1,7 +1,7 @@
 version: '3.4'
 
 networks:
-  binary-diff-dev:
+  binary-diff-overlay:
     driver: bridge
 
 services:
@@ -20,7 +20,7 @@ services:
       /app/wait-for-it.sh --strict --timeout=30 rabbitmq:5672 --
       dotnet BinaryDiff.Worker.App.dll
     networks:
-      - binary-diff-dev
+      - binary-diff-overlay
     depends_on:
       - mongodb
       - rabbitmq
@@ -43,8 +43,10 @@ services:
     ports:
       - 5000:5000
     networks:
-      - binary-diff-dev
+      - binary-diff-overlay
     depends_on:
+      - mongodb
+      - rabbitmq
       - worker-app
 
   result-webapi:
@@ -55,15 +57,18 @@ services:
       dockerfile: ./Services/BinaryDiff.Result/Dockerfile
     entrypoint: >
       /app/wait-for-it.sh --strict --timeout=30 postgres:5432 --
+      /app/wait-for-it.sh --strict --timeout=30 mongodb:27017 --
+      /app/wait-for-it.sh --strict --timeout=30 rabbitmq:5672 --
       dotnet BinaryDiff.Result.WebApi.dll
     environment:
       ASPNETCORE_URLS: http://+:6000
     ports:
       - 6000:6000
     networks:
-      - binary-diff-dev
+      - binary-diff-overlay
     depends_on:
       - postgres
+      - rabbitmq
       - worker-app
 
   api-gateway:
@@ -85,4 +90,4 @@ services:
       - result-webapi
       - worker-app
     networks:
-      - binary-diff-dev
+      - binary-diff-overlay

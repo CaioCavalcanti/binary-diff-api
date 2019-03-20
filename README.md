@@ -25,6 +25,12 @@ Assumptions were taken on how to implement this PoC, you can check it at the end
 - Unit and integration tests on XUnit
 - Docker files: `Dockerfile` and `docker-compose.yml`
 
+- API Gateway
+- Input Web API
+- Result Web API
+- Worker Console App
+
+
 # Running it
 
 The project was built to run on Docker (~~because runs on my machine is not an excuse~~), so you just need to execute the command below on the repo:

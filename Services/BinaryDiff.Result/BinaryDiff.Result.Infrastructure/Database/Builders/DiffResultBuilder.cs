@@ -25,6 +25,14 @@ namespace BinaryDiff.Result.Infrastructure.Database.Builders
                 .ValueGeneratedOnAdd();
 
             builder
+                .Property(dr => dr.TriggerInputId)
+                .IsRequired();
+
+            builder
+                .Property(dr => dr.TriggerInputPosition)
+                .IsRequired();
+
+            builder
                 .HasMany(dr => dr.Differences)
                 .WithOne(d => d.Result)
                 .HasForeignKey(d => d.ResultId);

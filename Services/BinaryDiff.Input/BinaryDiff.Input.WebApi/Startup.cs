@@ -1,5 +1,4 @@
-﻿using BinaryDiff.Input.Infrastructure.EventBus;
-using BinaryDiff.Input.Infrastructure.Repositories;
+﻿using BinaryDiff.Input.Infrastructure.Repositories;
 using BinaryDiff.Shared.WebApi.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,7 +32,6 @@ namespace BinaryDiff.Input.WebApi
                     .AddSingleton<IDiffRepository, DiffRepository>()
                     .AddSingleton<IInputRepository, InputRepository>()
                 .UseRabbitMQ(Configuration)
-                    .AddSingleton<IInputEventBus, InputEventBus>()
                 .UseAutoMapper()
                 .UseAutoFacServiceProvider();
         }

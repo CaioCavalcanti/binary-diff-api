@@ -14,7 +14,7 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
         public Type HandlerType { get; }
         public Type EventType { get; }
 
-        private Subscription(Type handlerType, Type eventType = null)
+        private Subscription(Type eventType, Type handlerType)
         {
             HandlerType = handlerType;
             EventType = eventType;
@@ -44,6 +44,6 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
         /// <param name="handlerType">Instance of IntegrationEventHandler<IntegrationEvent></param>
         /// <returns>Subscription instance</returns>
         public static Subscription New(Type eventType, Type handlerType)
-            => new Subscription(handlerType, eventType);
+            => new Subscription(eventType, handlerType);
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BinaryDiff.Result.Infrastructure.Database.Migrations
 {
-    public partial class initial_migration : Migration
+    public partial class Initial_migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,8 +13,11 @@ namespace BinaryDiff.Result.Infrastructure.Database.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     DiffId = table.Column<Guid>(nullable: false),
+                    Result = table.Column<int>(nullable: false),
                     Timestamp = table.Column<DateTime>(nullable: false),
-                    Result = table.Column<int>(nullable: false)
+                    TriggerInputId = table.Column<string>(nullable: false),
+                    TriggerInputPosition = table.Column<int>(nullable: false),
+                    OpposingInputId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

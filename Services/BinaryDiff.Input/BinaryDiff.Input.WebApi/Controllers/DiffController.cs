@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using BinaryDiff.Input.Domain.Enums;
 using BinaryDiff.Input.Domain.Models;
-using BinaryDiff.Input.Infrastructure.EventBus;
 using BinaryDiff.Input.Infrastructure.Repositories;
 using BinaryDiff.Input.WebApi.IntegrationEvents;
 using BinaryDiff.Input.WebApi.ViewModels;
+using BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus;
 using BinaryDiff.Shared.WebApi.ResultMessages;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,14 +22,14 @@ namespace BinaryDiff.Input.WebApi.Controllers
         private readonly IDiffRepository _diffRepository;
         private readonly IInputRepository _inputRepository;
         private readonly IMapper _mapper;
-        private readonly IInputEventBus _eventBus;
+        private readonly IRabbitMQEventBus _eventBus;
 
         public DiffController(
             ILogger<DiffController> logger,
             IDiffRepository diffRepository,
             IInputRepository inputRepository,
             IMapper mapper,
-            IInputEventBus eventBus
+            IRabbitMQEventBus eventBus
         )
         {
             _logger = logger;
@@ -44,15 +44,15 @@ namespace BinaryDiff.Input.WebApi.Controllers
         [ProducesResponseType(typeof(ExceptionResultMessage), 500)]
         public async Task<IActionResult> Post()
         {
-            _logger.LogDebug("New diff request");
+            _logger.LogInformation("New diff request");
 
             var newDiff = new Diff();
 
-            _logger.LogDebug("Adding diff...");
+            _logger.LogInformation("Adding diff...");
 
             await _diffRepository.AddOneAsync(newDiff);
 
-            _logger.LogDebug($"Diff added ({newDiff.UUID.ToString()})");
+            _logger.LogInformation($"Diff added ({newDiff.UUID.ToString()})");
 
             var viewModel = _mapper.Map<DiffViewModel>(newDiff);
 
@@ -88,7 +88,7 @@ namespace BinaryDiff.Input.WebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            _logger.LogDebug($"Find({diffId}): retrieving item on repository");
+            _logger.LogInformation($"Find({diffId}): retrieving item on repository");
 
             var diff = await _diffRepository.FindAsync(_ => _.UUID == diffId);
 
@@ -101,19 +101,19 @@ namespace BinaryDiff.Input.WebApi.Controllers
 
             var newInput = new InputData(diffId, position, input.Data);
 
-            _logger.LogDebug($"Save({diffId}, Diff obj): saving item on repository");
+            _logger.LogInformation($"Save({diffId}, Diff obj): saving item on repository");
 
             await _inputRepository.AddOneAsync(newInput);
 
-            _logger.LogDebug($"Save({diffId}, Diff obj): saving item on repository");
+            _logger.LogInformation($"Save({diffId}, Diff obj): saving item on repository");
 
             var eventMessage = new NewInputIntegrationEvent(diffId, newInput.Id, newInput.Timestamp);
 
-            _logger.LogDebug($"Input registered, sending integration event ({eventMessage.Id})");
+            _logger.LogInformation($"Input registered, sending integration event ({eventMessage.Id})");
 
             _eventBus.Publish(eventMessage);
 
-            _logger.LogDebug($"Integration event ({eventMessage.Id}) sent!");
+            _logger.LogInformation($"Integration event ({eventMessage.Id}) sent!");
 
             return Created(diffId.ToString(), null);
         }

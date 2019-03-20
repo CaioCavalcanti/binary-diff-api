@@ -4,6 +4,7 @@ using AutoMapper;
 using BinaryDiff.Shared.Infrastructure.Configuration;
 using BinaryDiff.Shared.Infrastructure.MongoDb.Context;
 using BinaryDiff.Shared.Infrastructure.RabbitMQ.Connections;
+using BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
@@ -14,6 +15,16 @@ namespace BinaryDiff.Shared.WebApi.Extensions
 {
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Configure Swagger on Web API using default configuration.
+        /// Requires API project to have GenerateDocumentationFile set to true on its *.csproj
+        /// in order to generate the doc file from comments (output to *.xml)
+        /// </summary>
+        /// <typeparam name="T">Startup type to get assembly name</typeparam>
+        /// <param name="services">Instance of IServiceCollection</param>
+        /// <param name="apiTitle">API title</param>
+        /// <param name="version">API version</param>
+        /// <returns></returns>
         public static IServiceCollection ConfigureSwagger<T>(this IServiceCollection services, string apiTitle, string version)
         {
             return services.AddSwaggerGen(cfg =>
@@ -37,6 +48,12 @@ namespace BinaryDiff.Shared.WebApi.Extensions
             });
         }
 
+        /// <summary>
+        /// Initialize AutoMapper, getting mappings from classes that inherits Profile,
+        /// validating the configuration and providing it on IoC
+        /// </summary>
+        /// <param name="services">Instance of IServiceCollection</param>
+        /// <returns></returns>
         public static IServiceCollection UseAutoMapper(this IServiceCollection services)
         {
             Mapper.Initialize(cfg => { });
@@ -62,7 +79,8 @@ namespace BinaryDiff.Shared.WebApi.Extensions
             return services
                 .AddOptions()
                 .Configure<RabbitMQConfiguration>(rabbitMQConfig)
-                .AddSingleton<IRabbitMQPersistentConnection, RabbitMQPersistentConnection>();
+                .AddSingleton<IRabbitMQPersistentConnection, RabbitMQPersistentConnection>()
+                .AddSingleton<IRabbitMQEventBus, RabbitMQEventBus>();
         }
 
         public static AutofacServiceProvider UseAutoFacServiceProvider(this IServiceCollection services)

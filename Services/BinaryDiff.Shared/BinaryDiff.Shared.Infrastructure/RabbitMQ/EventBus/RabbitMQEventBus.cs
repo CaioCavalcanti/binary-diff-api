@@ -14,11 +14,12 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
 {
     public class RabbitMQEventBus : IRabbitMQEventBus
     {
+        const string EXCHANGE_NAME = "BinaryDiff.EventBus";
+
         private readonly ILifetimeScope _autofac;
         private readonly ILogger _logger;
         private readonly IRabbitMQPersistentConnection _connection;
         private readonly int _retryCount;
-        private readonly string _exchangeName;
         private readonly RabbitMQExchangeType _exchangeType;
         private readonly ISubscriptionManager _subscriptionManager;
 
@@ -29,7 +30,6 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
             IRabbitMQPersistentConnection persistentConnection,
             ILogger<RabbitMQEventBus> logger,
             ILifetimeScope autofac,
-            string name,
             RabbitMQExchangeType type = RabbitMQExchangeType.Direct,
             int retryCount = 5
         )
@@ -37,7 +37,6 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
             _connection = persistentConnection;
             _logger = logger;
             _autofac = autofac;
-            _exchangeName = name;
             _exchangeType = type;
             _retryCount = retryCount;
 
@@ -58,7 +57,7 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
             var channel = _connection.CreateModel();
 
             channel.ExchangeDeclare(
-                exchange: _exchangeName,
+                exchange: EXCHANGE_NAME,
                 type: Enum.GetName(typeof(RabbitMQExchangeType), _exchangeType).ToLower());
 
             _queueName = channel.QueueDeclare().QueueName;
@@ -94,22 +93,29 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
         /// <param name="message">Message to process on event handler</param>
         private void HandleEvent(string eventName, string message)
         {
-            if (!_subscriptionManager.HasSubscriptionsForEvent(eventName))
+            try
             {
-                return;
-            }
-
-            using (var scope = _autofac.BeginLifetimeScope(nameof(RabbitMQEventBus)))
-            {
-                var subscriptions = _subscriptionManager.GetSubscriptionsForEvent(eventName);
-                var handleTasks = new List<Task>();
-
-                foreach (var subscription in subscriptions)
+                if (!_subscriptionManager.HasSubscriptionsForEvent(eventName))
                 {
-                    handleTasks.Add(subscription.HandleAsync(message, scope));
+                    return;
                 }
 
-                Task.WaitAll(handleTasks.ToArray());
+                using (var scope = _autofac.BeginLifetimeScope(nameof(RabbitMQEventBus)))
+                {
+                    var subscriptions = _subscriptionManager.GetSubscriptionsForEvent(eventName);
+                    var handleTasks = new List<Task>();
+
+                    foreach (var subscription in subscriptions)
+                    {
+                        handleTasks.Add(subscription.HandleAsync(message, scope));
+                    }
+
+                    Task.WaitAll(handleTasks.ToArray());
+                }
+            } catch(Exception ex)
+            {
+                // TODO: handle ex
+                _logger.LogError(ex, $"An error occurred processing message for event {eventName}");
             }
         }
 
@@ -130,20 +136,20 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
             using (var channel = _connection.CreateModel())
             {
                 channel.ExchangeDeclare(
-                    exchange: _exchangeName,
+                    exchange: EXCHANGE_NAME,
                     type: Enum.GetName(typeof(RabbitMQExchangeType), _exchangeType).ToLower());
 
                 var message = JsonConvert.SerializeObject(@event);
                 var body = Encoding.UTF8.GetBytes(message);
 
                 RabbitMQFactory.GetDefaultRetryPolicy(_logger, _retryCount)
-                    .Execute(() =>
+                    .Execute((Action)(() =>
                     {
                         channel.BasicPublish(
-                            exchange: _exchangeName,
+                            exchange: EXCHANGE_NAME,
                             routingKey: @event.GetType().Name,
                             body: body);
-                    });
+                    }));
             }
         }
 
@@ -163,7 +169,7 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
             {
                 channel.QueueBind(
                     queue: _queueName,
-                    exchange: _exchangeName,
+                    exchange: EXCHANGE_NAME,
                     routingKey: eventName
                 );
             }
@@ -185,7 +191,7 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
             {
                 channel.QueueUnbind(
                     queue: _queueName,
-                    exchange: _exchangeName,
+                    exchange: EXCHANGE_NAME,
                     routingKey: eventName
                 );
 

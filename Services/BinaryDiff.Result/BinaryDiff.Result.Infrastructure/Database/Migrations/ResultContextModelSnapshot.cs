@@ -26,10 +26,17 @@ namespace BinaryDiff.Result.Infrastructure.Database.Migrations
 
                     b.Property<Guid>("DiffId");
 
+                    b.Property<string>("OpposingInputId");
+
                     b.Property<int>("Result");
 
                     b.Property<DateTime>("Timestamp")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("TriggerInputId")
+                        .IsRequired();
+
+                    b.Property<int>("TriggerInputPosition");
 
                     b.HasKey("Id");
 

@@ -1,7 +1,7 @@
 ﻿using Autofac.Extensions.DependencyInjection;
 using BinaryDiff.Shared.WebApi.Extensions;
+using BinaryDiff.Worker.App.Events.IntegrationEventHandlers;
 using BinaryDiff.Worker.Domain.Logic;
-using BinaryDiff.Worker.Infrastructure.EventBus;
 using BinaryDiff.Worker.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,8 +45,7 @@ namespace BinaryDiff.Worker.App
                 .UseMongoDb(_configuration)
                     .AddSingleton<IInputRepository, InputRepository>()
                 .AddSingleton<IDiffLogic, DiffLogic>()
-                    .AddSingleton<IInputEventBus, InputEventBus>()
-                    .AddSingleton<IResultEventBus, ResultEventBus>()
+                .AddTransient<NewInputIntegrationEventHandler>()
                 .AddTransient<Worker>()
                 .UseAutoFacServiceProvider();
         }

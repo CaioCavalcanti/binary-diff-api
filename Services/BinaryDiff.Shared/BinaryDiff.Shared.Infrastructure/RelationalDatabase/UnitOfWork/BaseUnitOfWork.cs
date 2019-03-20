@@ -15,7 +15,10 @@ namespace BinaryDiff.Shared.Infrastructure.RelationalDatabase
 
         public void Dispose()
         {
-            context?.Dispose();
+            if (context != null)
+            {
+                context.Dispose();
+            }
         }
 
         public Task SaveChangesAsync()

@@ -12,7 +12,7 @@ namespace BinaryDiff.Worker.Infrastructure.EventBus
             IRabbitMQPersistentConnection connection,
             ILogger<InputEventBus> logger,
             ILifetimeScope autofac
-        ) : base(connection, logger, autofac, nameof(InputEventBus), RabbitMQExchangeType.Direct)
+        ) : base(connection, logger, autofac, RabbitMQExchangeType.Direct)
         {
         }
     }

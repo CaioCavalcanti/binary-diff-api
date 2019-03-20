@@ -14,4 +14,8 @@
     <ProjectReference Include="..\BinaryDiff.Result.Domain\BinaryDiff.Result.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Database\Migrations\" />
+  </ItemGroup>
+
 </Project>

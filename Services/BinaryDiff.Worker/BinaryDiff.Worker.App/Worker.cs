@@ -1,6 +1,6 @@
-﻿using BinaryDiff.Worker.App.Events.IntegrationEventHandlers;
+﻿using BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus;
+using BinaryDiff.Worker.App.Events.IntegrationEventHandlers;
 using BinaryDiff.Worker.App.Events.IntegrationEvents;
-using BinaryDiff.Worker.Infrastructure.EventBus;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
@@ -12,19 +12,19 @@ namespace BinaryDiff.Worker.App
         private static AutoResetEvent _closing = new AutoResetEvent(false);
 
         private readonly ILogger _logger;
-        private readonly IInputEventBus _inputEventBus;
+        private readonly IRabbitMQEventBus _eventBus;
 
-        public Worker(ILogger<Worker> logger, IInputEventBus inputEventBus)
+        public Worker(ILogger<Worker> logger, IRabbitMQEventBus eventBus)
         {
             _logger = logger;
-            _inputEventBus = inputEventBus;
+            _eventBus = eventBus;
         }
 
         public void ListenToNewInputs()
         {
             _logger.LogInformation($"Subscribing to event {nameof(NewInputIntegrationEvent)}");
 
-            _inputEventBus.Subscribe<NewInputIntegrationEvent, NewInputIntegrationEventHandler>();
+            _eventBus.Subscribe<NewInputIntegrationEvent, NewInputIntegrationEventHandler>();
 
             _logger.LogInformation($"Subscription created, listening to event {nameof(NewInputIntegrationEvent)}");
 
@@ -34,7 +34,7 @@ namespace BinaryDiff.Worker.App
             {
                 _logger.LogInformation($"Subscribing to event {nameof(NewInputIntegrationEvent)}");
 
-                _inputEventBus.Unsubscribe<NewInputIntegrationEvent, NewInputIntegrationEventHandler>();
+                _eventBus.Unsubscribe<NewInputIntegrationEvent, NewInputIntegrationEventHandler>();
 
                 _logger.LogInformation("Closing worker app...");
 
