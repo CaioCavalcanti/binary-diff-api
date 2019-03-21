@@ -25,7 +25,12 @@ namespace BinaryDiff.Shared.WebApi.Extensions
         /// <param name="apiTitle">API title</param>
         /// <param name="version">API version</param>
         /// <returns></returns>
-        public static IServiceCollection ConfigureSwagger<T>(this IServiceCollection services, string apiTitle, string version)
+        public static IServiceCollection UseSwagger<T>(
+            this IServiceCollection services,
+            string apiTitle,
+            string version,
+            bool useDocsFromXmlComments = true
+        )
         {
             return services.AddSwaggerGen(cfg =>
             {
@@ -41,10 +46,13 @@ namespace BinaryDiff.Shared.WebApi.Extensions
                     }
                 });
 
-                var xmlFile = $"{typeof(T).Assembly.GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                if (useDocsFromXmlComments)
+                {
+                    var xmlFile = $"{typeof(T).Assembly.GetName().Name}.xml";
+                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
-                cfg.IncludeXmlComments(xmlPath);
+                    cfg.IncludeXmlComments(xmlPath);
+                }
             });
         }
 

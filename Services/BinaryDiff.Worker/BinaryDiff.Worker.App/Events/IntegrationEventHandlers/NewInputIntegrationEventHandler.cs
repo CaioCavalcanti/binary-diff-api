@@ -30,26 +30,38 @@ namespace BinaryDiff.Worker.App.Events.IntegrationEventHandlers
             _logic = logic;
         }
 
+        /// <summary>
+        /// Get opposing side input, compares them and publish result as NewResultIntegrationEvent
+        /// </summary>
+        /// <param name="event"></param>
+        /// <returns></returns>
         public Task Handle(NewInputIntegrationEvent @event)
         {
             try
             {
                 var (input, opposingInput) = GetInputsToCompare(@event);
 
-                var diffResult = _logic.CompareData(input, opposingInput);
+                if (input != null)
+                {
+                    var diffResult = _logic.CompareData(input, opposingInput);
 
-                PublishNewResult(input, opposingInput?.Id, diffResult);
+                    PublishNewResult(input, opposingInput?.Id, diffResult);
+                }
+
+                return Task.CompletedTask;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to process");
-
-                // TODO: handle exception (retry?)
+                _logger.LogError(ex, $"Failed to process event {@event.Id}");
+                throw;
             }
-
-            return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Determines 
+        /// </summary>
+        /// <param name="newInputEvent"></param>
+        /// <returns></returns>
         private (InputData, InputData) GetInputsToCompare(NewInputIntegrationEvent newInputEvent)
         {
             var opposingPosition = _logic.GetOpposingPosition(newInputEvent.Position);

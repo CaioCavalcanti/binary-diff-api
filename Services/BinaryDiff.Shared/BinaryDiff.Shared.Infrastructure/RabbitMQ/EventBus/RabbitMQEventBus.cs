@@ -70,6 +70,8 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
                 var message = Encoding.UTF8.GetString(ea.Body);
 
                 HandleEvent(eventName, message);
+
+                channel.BasicAck(ea.DeliveryTag, false);
             };
 
             channel.BasicConsume(queue: _queueName,
@@ -112,7 +114,8 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
 
                     Task.WaitAll(handleTasks.ToArray());
                 }
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 // TODO: handle ex
                 _logger.LogError(ex, $"An error occurred processing message for event {eventName}");

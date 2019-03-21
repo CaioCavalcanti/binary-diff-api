@@ -11,6 +11,14 @@ namespace BinaryDiff.Worker.Domain.Models
     [BsonIgnoreExtraElements]
     public class InputData : BaseDocument
     {
+        public InputData() { }
+
+        public InputData(InputPosition position, string data)
+        {
+            Position = position;
+            Data = data;
+        }
+
         /// <summary>
         /// Diff unique ID
         /// </summary>

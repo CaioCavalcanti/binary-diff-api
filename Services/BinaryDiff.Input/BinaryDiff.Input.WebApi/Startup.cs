@@ -27,7 +27,7 @@ namespace BinaryDiff.Input.WebApi
                 .ConfigureJsonSerializerSettings();
 
             return services
-                .ConfigureSwagger<Startup>(API_NAME, API_VERSION)
+                .UseSwagger<Startup>(API_NAME, API_VERSION)
                 .UseMongoDb(Configuration)
                     .AddSingleton<IDiffRepository, DiffRepository>()
                     .AddSingleton<IInputRepository, InputRepository>()

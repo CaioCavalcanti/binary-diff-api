@@ -21,57 +21,56 @@ Assumptions were taken on how to implement this PoC, you can check it at the end
 
 # What's in it?
 
-- API based on ASP.NET Core 2.1
-- Unit and integration tests on XUnit
-- Docker files: `Dockerfile` and `docker-compose.yml`
-
 - API Gateway
+  - ASP.NET Core 2.1
+  - Ocelot
 - Input Web API
+  - ASP.NET Core 2.1
+  - MongoDB
 - Result Web API
+  - ASP.NET Core 2.1
+  - Postgres SQL
 - Worker Console App
-
+  - Console App on .NET Core 2.1
+- RabbitMQ as Event Bus
+- Docker files: `Dockerfile` and `docker-compose.yml`
 
 # Running it
 
-The project was built to run on Docker (~~because runs on my machine is not an excuse~~), so you just need to execute the command below on the repo:
+The project was built to run on Docker, so you just need to execute the command below on the repo:
 
 ```
 $ docker-compose -f docker-compose.yml -f docker-compose-infrastructure.yml up --build
 ```
 
-As soon as it finishes building the container, the service will be available on `http://localhost:8000/v1/<RESOURCE_PATH>` (you can configure a different port on `Dockerfile` if needed).
-
-If Docker is not an option in your case, you can also run it using [NET Core CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/?tabs=netcore2x) with the following commands:
-
-```
-$ dotnet restore
-$ dotnet run --project BinaryDiff.API\BinaryDiff.API.csproj
-```
-
-Swagger is configured and available on root `http://localhost:8000/`.
+As soon as it finishes building the container, the service will be available on `http://localhost:4000/`
 
 # Testing
 
-`Dockerfile` is configured to execute tests when building the image, you can check the results on the logs.
+1. Create a new diff
 
-You can also run the tests using [NET Core CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/?tabs=netcore2x) with the command below:
+```
+POST http://localhost:4000/v1/diff
+```
+
+2. Post `left` and/or `right` data using the ID you got as result from step 1
+
+```
+POST http://localhost:4000/v1/diff/<ID>
+```
+
+3. Get the results for the diff you created
+
+```
+GET http://localhost:4000/v1/diff/<ID>
+```
+
+## Unit Tests
+
+You can execute the tests using [NET Core CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/?tabs=netcore2x) with the command below:
 
 ```
 $ dotnet test
-```
-
-If you are interested on code coverage you can use params `/p:CollectCoverage=true /p:Exclude="[xunit*]*"` (targeting [Coverlet](https://github.com/tonerdo/coverlet))
-
-```
-$ dotnet test /p:CollectCoverage=true /p:Exclude="[xunit*]*"
-```
-
-`/p:Exclude="[xunit*]*"` is needed to avoid an known issue in Coverlet ([Latest NuGet package no longer works #359](https://github.com/tonerdo/coverlet/issues/359))
-
-## Stressing out
-
-```
-TODO: if spare time... build a client app to stress out the API
 ```
 
 # Assumptions
@@ -98,7 +97,7 @@ Location: /v1/diff/c274cfba-653f-472b-b10f-b18d56a655a4
 ```
 
 - ID type is **Guid** (i.e. `26e67e07-f142-440e-b7af-dd39842c8678`).
-- You'll need to use `POST` HTTP method to provide data on `/v1/diff/<ID>/left` and `/v1/diff/<ID>/right`, example:
+- You'll need to use `POST` method to provide data on `/v1/diff/<ID>/left` and `/v1/diff/<ID>/right`, example:
 
 ```
 # Request
@@ -114,7 +113,8 @@ Content-Type: application/json
 ```
 
 - `null` and `string.Empty` are valid inputs and were taken in consideration as length 0.
-- For the sake of time, `/left` and `/right` expect the input as a base 64 encoded string sent as example below.
+- `/left` and `/right` expect the input as a base 64 encoded string sent as example below.
+
 ```
 POST /v1/diff/<ID>/<left|right> HTTP/1.1
 Host: <HOST>
@@ -125,26 +125,5 @@ Content-type: application/json
     "data": "SGVsbG93IFdvcmxkIQ=="
 }
 ```
-- `differences` will be returned only if diff result is `Different`. Example:
 
-```
-{
-    "result": "Equal | LeftIsLarger | RightIsLarger"
-}
-
-// OR
-
-{
-    "result": "Different",
-    "differences": {
-        "0": 3,
-        "151": 2,
-        "380": 4,
-        "463": 5
-    }
-}
-```
-- Diff results are stored on a repository to reduce processing time
-- When a diff result is returned, its timestamp is sent on response header
-- If not timestamp provided on query params when getting diff results, it will compare the latest data on both sides.
-- Timestamps always in UTC
+- Diff results are stored on a repository to reduce processing time, so we can compare data async on a different service

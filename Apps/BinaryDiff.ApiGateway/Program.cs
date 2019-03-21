@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore;
+﻿using BinaryDiff.Shared.WebApi.Extensions;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace BinaryDiff.ApiGateway
 {
@@ -17,18 +17,12 @@ namespace BinaryDiff.ApiGateway
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config
-                        .SetBasePath(hostingContext.HostingEnvironment.ContentRootPath)
-                        .AddJsonFile("appsettings.json", true, true)
-                        .AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true)
-                        .AddJsonFile("ocelot.json")
-                        .AddEnvironmentVariables();
+                        .UseDefaultConfiguration(hostingContext.HostingEnvironment)
+                        .AddJsonFile("ocelot.json");
                 })
                 .ConfigureLogging((hostingContext, logging) =>
-                {
-                    logging
-                        .AddDebug()
-                        .AddConsole();
-                })
+                    logging.UseDefault()
+                )
                 .UseStartup<Startup>();
     }
 }

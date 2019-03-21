@@ -34,7 +34,7 @@ namespace BinaryDiff.Result.WebApi
             ConfigureDatabase(services);
 
             return services
-                .ConfigureSwagger<Startup>(API_NAME, API_VERSION)
+                .UseSwagger<Startup>(API_NAME, API_VERSION)
                 .UseAutoMapper()
                 .UseRabbitMQ(Configuration)
                     .AddTransient<NewResultIntegrationEventHandler>()
