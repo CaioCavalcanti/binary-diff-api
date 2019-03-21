@@ -107,7 +107,7 @@ namespace BinaryDiff.Input.WebApi.Controllers
 
             _logger.LogInformation($"Save({diffId}, Diff obj): saving item on repository");
 
-            var eventMessage = new NewInputIntegrationEvent(diffId, newInput.Id, newInput.Timestamp);
+            var eventMessage = new NewInputIntegrationEvent(newInput);
 
             _logger.LogInformation($"Input registered, sending integration event ({eventMessage.Id})");
 

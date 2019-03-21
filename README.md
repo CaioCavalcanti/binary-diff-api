@@ -29,7 +29,7 @@ Assumptions were taken on how to implement this PoC, you can check it at the end
   - MongoDB
 - Result Web API
   - ASP.NET Core 2.1
-  - Postgres SQL
+  - PostgreSQL
 - Worker Console App
   - Console App on .NET Core 2.1
 - RabbitMQ as Event Bus
