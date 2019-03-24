@@ -23,7 +23,8 @@ namespace BinaryDiff.IntegrationTests
         {
             _client = new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:4000")
+                // Ocelot API Gateway
+                BaseAddress = new Uri("http://localhost:4000") 
             };
         }
 
