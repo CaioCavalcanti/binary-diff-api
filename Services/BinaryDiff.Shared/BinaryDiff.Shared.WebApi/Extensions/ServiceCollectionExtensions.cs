@@ -64,8 +64,18 @@ namespace BinaryDiff.Shared.WebApi.Extensions
         /// <returns></returns>
         public static IServiceCollection UseAutoMapper(this IServiceCollection services)
         {
-            Mapper.Initialize(cfg => { });
-            Mapper.AssertConfigurationIsValid();
+            try
+            {
+                Mapper.Initialize(cfg => { });
+            }
+            catch (InvalidOperationException ex)
+            {
+            }
+            finally
+            {
+                Mapper.AssertConfigurationIsValid();
+            }
+
 
             return services.AddAutoMapper();
         }

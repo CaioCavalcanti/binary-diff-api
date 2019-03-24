@@ -10,11 +10,11 @@ using System.IO;
 
 namespace BinaryDiff.Worker.App
 {
-    class Program
+    public class Program
     {
         private static IConfiguration _configuration;
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             ConsoleLog("Starting BinaryDiff.Worker.App...");
             try

@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="InputWebApi\appsettings.json" />
+    <None Remove="ResultWebApi\appsettings.json" />
+    <None Remove="WorkerApp\appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="InputWebApi\appsettings.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ResultWebApi\appsettings.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="WorkerApp\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Apps\BinaryDiff.ApiGateway\BinaryDiff.ApiGateway.csproj" />
+    <ProjectReference Include="..\..\Services\BinaryDiff.Input\BinaryDiff.Input.WebApi\BinaryDiff.Input.WebApi.csproj" />
+    <ProjectReference Include="..\..\Services\BinaryDiff.Result\BinaryDiff.Result.WebApi\BinaryDiff.Result.WebApi.csproj" />
+    <ProjectReference Include="..\..\Services\BinaryDiff.Worker\BinaryDiff.Worker.App\BinaryDiff.Worker.App.csproj" />
+  </ItemGroup>
+
+</Project>

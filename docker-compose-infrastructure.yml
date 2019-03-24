@@ -1,5 +1,9 @@
 version: '3.4'
- 
+
+networks:
+  binary-diff-overlay:
+    driver: bridge
+     
 services:
   mongodb:
     image: mongo
