@@ -21,18 +21,20 @@ Assumptions were taken on how to implement this PoC, you can check it at the end
 
 # What's in it?
 
-- API Gateway
-  - ASP.NET Core 2.1
-  - Ocelot
-- Input Web API
-  - ASP.NET Core 2.1
-  - MongoDB
-- Result Web API
-  - ASP.NET Core 2.1
-  - PostgreSQL
+- API Gateway (`http://localhost:4000/`)
+  - Serves as gateway to centralize the different endpoints and APIs on `/v1/diff`
+  - Built upon ASP.NET Core 2.1 and Ocelot
+- Input Web API (`http://localhost:5000/`)
+  - Adds new diffs and inputs for both positions and notifies
+  - Built upon ASP.NET Core 2.1 and MongoDB
+- Result Web API (`http://localhost:6000/`)
+  - Receives new diff results from queue in background and provide them on an API endpoint
+  - Built upon ASP.NET Core 2.1 and PostgreSQL
 - Worker Console App
-  - Console App on .NET Core 2.1
-- RabbitMQ as Event Bus
+  - Process new inputs and publishing the results on queue
+  - Built upon .NET Core 2.1
+- RabbitMQ (`http://localhost:15672/`)
+  - Serves as event bus
 - Docker files: `Dockerfile` and `docker-compose.yml`
 
 # Running it
@@ -51,18 +53,47 @@ As soon as it finishes building the container, the service will be available on 
 
 ```
 POST http://localhost:4000/v1/diff
+----------------------------------------
+HTTP/1.1 201 Created
+{
+    "id": "a10944b1-2b90-4645-963d-c36a5e8f7569"
+}
 ```
 
 2. Post `left` and/or `right` data using the ID you got as result from step 1
 
 ```
-POST http://localhost:4000/v1/diff/<ID>
+POST http://localhost:4000/v1/diff/<ID>/<left|right>
+{
+    "data": "SGVsbG93IFdvcmxkIQ=="
+}
+----------------------------------------
+HTTP/1.1 201 Created
+{
+    "id": "<INPUT_ID>",
+    "position": "Left|Right",
+    "diffId": "<ID>",
+    "timestamp": "<INPUT_CREATION_DATE>"
+}
 ```
 
 3. Get the results for the diff you created
 
 ```
 GET http://localhost:4000/v1/diff/<ID>
+----------------------------------------
+HTTP/1.1 200 OK
+{
+    "id": "<RESULT_ID>",
+    "result": "Different|Equal|LeftIsLarger|RightIsLarger",
+    "timestamp": "<RESULT_CREATION_DATE>",
+    "differences": [
+        {
+            "offset": 0,
+            "length": 6
+        }
+    ]
+}
 ```
 
 ## Unit Tests
@@ -83,47 +114,58 @@ $ dotnet test
 POST /v1/diff HTTP/1.1
 Host: <HOST>
 Accept: application/json
-[...]
-
-# Response
+----------------------------------------
 HTTP/1.1 200 OK
 Content-Type: application/json
-Location: /v1/diff/c274cfba-653f-472b-b10f-b18d56a655a4
-[...]
-
+Location: c274cfba-653f-472b-b10f-b18d56a655a4
 {
     "id": "26e67e07-f142-440e-b7af-dd39842c8678"
 }
 ```
 
-- ID type is **Guid** (i.e. `26e67e07-f142-440e-b7af-dd39842c8678`).
+- ID type is **Guid** (i.e. `26e67e07-f142-440e-b7af-dd39842c8678`)
 - You'll need to use `POST` method to provide data on `/v1/diff/<ID>/left` and `/v1/diff/<ID>/right`, example:
 
 ```
-# Request
-POST /v1/diff/<ID>/left HTTP/1.1
+POST /v1/diff/fb386f98-d475-49d5-b027-658d7efe8ec1/left HTTP/1.1
 Host: <HOST>
 Accept: application/json
-[...]
-
-# Response
+{
+    "data": "SGVsbG93IFdvcmxkIQ=="
+}
+----------------------------------------
 HTTP/1.1 201 Created
 Content-Type: application/json
-[...]
+Location: 5c96f39cbb9fda000111f7f5
+{
+    "id": "5c96f39cbb9fda000111f7f5",
+    "position": "Left",
+    "diffId": "fb386f98-d475-49d5-b027-658d7efe8ec1",
+    "timestamp": "2019-03-24T03:03:56.5541059Z"
+}
 ```
 
-- `null` and `string.Empty` are valid inputs and were taken in consideration as length 0.
+- `null` and `string.Empty` are valid inputs and were taken in consideration as length 0
 - `/left` and `/right` expect the input as a base 64 encoded string sent as example below.
 
 ```
 POST /v1/diff/<ID>/<left|right> HTTP/1.1
 Host: <HOST>
 Content-type: application/json
-[...]
-
 {
     "data": "SGVsbG93IFdvcmxkIQ=="
 }
 ```
 
-- Diff results are stored on a repository to reduce processing time, so we can compare data async on a different service
+- Diff results are stored on a repository to reduce processing time, so we can compare data async on a different service, called `Worker`
+- When a new input is registered on `Input Web API` (either `/left` or `/right`), a new input event is published in RabbitMQ
+- `Worker` is a simples console app that subscribes to new input events on RabbitMQ and process them as
+- After processing the results, `Worker` publishes a new diff result to RabbitMQ
+- `Result Web API` subscribes to new diff results events, registering them on the repository as they arrive
+
+# Improvements opportunities
+
+- Use redis to cache results in memory
+- Add endpoints to get details for input and diff result by id
+- Implement HATEOAS
+- Implement load/stress tests

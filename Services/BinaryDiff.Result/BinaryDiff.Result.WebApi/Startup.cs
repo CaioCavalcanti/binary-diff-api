@@ -1,5 +1,6 @@
 ﻿using BinaryDiff.Result.Infrastructure.Database;
 using BinaryDiff.Result.Infrastructure.Repositories;
+using BinaryDiff.Result.Infrastructure.Repositories.Implementation;
 using BinaryDiff.Result.WebApi.Events.IntegrationEventHandlers;
 using BinaryDiff.Result.WebApi.Events.IntegrationEvents;
 using BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus;
@@ -64,7 +65,8 @@ namespace BinaryDiff.Result.WebApi
                 .AddDbContext<ResultContext>(
                     options => options.UseNpgsql(connectionString)
                 )
-                .AddScoped<IUnitOfWork, UnitOfWork>();
+                .AddScoped<IUnitOfWork, UnitOfWork>()
+                .AddScoped<IDiffResultsRepository, DiffResultsRepository>();
         }
 
         /// <summary>

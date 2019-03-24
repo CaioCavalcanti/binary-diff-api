@@ -220,7 +220,7 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>
         {
-            if (_consumerChannel.IsClosed)
+            if (_consumerChannel == null || _consumerChannel.IsClosed)
             {
                 _consumerChannel = CreateConsumerChannel();
             }
