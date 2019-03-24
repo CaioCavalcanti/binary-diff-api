@@ -30,7 +30,7 @@ namespace BinaryDiff.Worker.UnitTests.Domain
         }
 
         /// <summary>
-        /// Tests if compare data handles result for different input positions
+        /// Tests if CompareData handles result for different input positions
         /// </summary>
         /// <param name="largerInputPosition">Input position that should be larger</param>
         /// <param name="smallerInputPosition">Input position that should be smaller</param>
@@ -51,10 +51,18 @@ namespace BinaryDiff.Worker.UnitTests.Domain
             Assert.Equal(result.Result, expectedResult);
         }
 
+        /// <summary>
+        /// Tests if GetOpposing position returns the correct opposing position
+        /// </summary>
+        /// <param name="position">Position to compare</param>
+        /// <param name="expectedOpposingPosition">Expected opposing position</param>
         [Theory]
         [InlineData(InputPosition.Left, InputPosition.Right)]
         [InlineData(InputPosition.Right, InputPosition.Left)]
-        public void GetOpposingPosition_(InputPosition position, InputPosition expectedOpposingPosition)
+        public void GetOpposingPosition_returns_expected_opposing_position_for_given_position(
+            InputPosition position,
+            InputPosition expectedOpposingPosition
+        )
         {
             var result = _logic.GetOpposingPosition(position);
 

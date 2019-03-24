@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Worker.App", "BinaryDiff.Worker.App\BinaryDiff.Worker.App.csproj", "{3922FDA7-404C-443D-924D-7BACBBAE3FEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Worker.App", "BinaryDiff.Worker.App\BinaryDiff.Worker.App.csproj", "{3922FDA7-404C-443D-924D-7BACBBAE3FEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Worker.Domain", "BinaryDiff.Worker.Domain\BinaryDiff.Worker.Domain.csproj", "{6D830BAE-3176-478F-9BC4-BF6F286E381F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Worker.Domain", "BinaryDiff.Worker.Domain\BinaryDiff.Worker.Domain.csproj", "{6D830BAE-3176-478F-9BC4-BF6F286E381F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Worker.Infrastructure", "BinaryDiff.Worker.Infrastructure\BinaryDiff.Worker.Infrastructure.csproj", "{7A37A594-242D-470F-8218-C4DE03355651}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Worker.Infrastructure", "BinaryDiff.Worker.Infrastructure\BinaryDiff.Worker.Infrastructure.csproj", "{7A37A594-242D-470F-8218-C4DE03355651}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

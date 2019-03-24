@@ -19,13 +19,15 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.Connections
 
         public RabbitMQPersistentConnection(
             IOptions<RabbitMQConfiguration> options,
-            ILogger<RabbitMQPersistentConnection> logger,
-            int retryCount = 5
+            ILogger<RabbitMQPersistentConnection> logger
         )
         {
-            _connectionFactory = RabbitMQFactory.GetConnectionFactory(options?.Value);
+            var config = options?.Value ?? throw new ArgumentNullException("RabbitMQ configuration not found on host!");
+            if (!config.IsValid()) throw new ArgumentException("RabbitMQ configuration is not valid");
+
+            _connectionFactory = RabbitMQFactory.GetConnectionFactory(config);
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _retryCount = retryCount;
+            _retryCount = config.RetryCount ?? 5;
         }
 
         public bool IsConnected
@@ -54,7 +56,10 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.Connections
 
             try
             {
-                _connection.Dispose();
+                if (_connection != null)
+                {
+                    _connection.Dispose();
+                }
             }
             catch (IOException ex)
             {

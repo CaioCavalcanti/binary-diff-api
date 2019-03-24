@@ -55,9 +55,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7563C54F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{773CC4E8-6805-43AF-880B-1FD35577D25E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Input.UnitTests", "Services\BinaryDiff.Input\BinaryDiff.Input.UnitTests\BinaryDiff.Input.UnitTests.csproj", "{67444ADF-635B-4E91-829B-6031DB131672}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Input.UnitTests", "Services\BinaryDiff.Input\BinaryDiff.Input.UnitTests\BinaryDiff.Input.UnitTests.csproj", "{67444ADF-635B-4E91-829B-6031DB131672}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Input.IntegrationTests", "Services\BinaryDiff.Input\BinaryDiff.Input.IntegrationTests\BinaryDiff.Input.IntegrationTests.csproj", "{E5FCF9F7-DA97-4FD0-8865-F57AECB67B9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Input.IntegrationTests", "Services\BinaryDiff.Input\BinaryDiff.Input.IntegrationTests\BinaryDiff.Input.IntegrationTests.csproj", "{E5FCF9F7-DA97-4FD0-8865-F57AECB67B9D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Result.UnitTests", "Services\BinaryDiff.Result\BinaryDiff.Result.UnitTests\BinaryDiff.Result.UnitTests.csproj", "{D59A719D-A132-42B9-AC71-B32AF319ACCD}"
 EndProject
@@ -66,6 +66,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Worker.UnitTests", "Services\BinaryDiff.Worker\BinaryDiff.Worker.UnitTests\BinaryDiff.Worker.UnitTests.csproj", "{498E1F90-1346-40D4-8F2A-468486F3F2A5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryDiff.Worker.IntegrationTests", "Services\BinaryDiff.Worker\BinaryDiff.Worker.IntegrationTests\BinaryDiff.Worker.IntegrationTests.csproj", "{12F2C416-ADE5-437D-9A4B-B03558B9DEFD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A0E84A5B-0FC8-4FCC-A802-8B4C3BEC225A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryDiff.Shared.UnitTests", "Services\BinaryDiff.Shared\BinaryDiff.Shared.UnitTests\BinaryDiff.Shared.UnitTests.csproj", "{F2FE491C-0994-4975-ACFC-3F8D4FAD20EF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9FB4A1E5-8D50-44BB-A7C7-E885C679ACC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -149,6 +155,10 @@ Global
 		{12F2C416-ADE5-437D-9A4B-B03558B9DEFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12F2C416-ADE5-437D-9A4B-B03558B9DEFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12F2C416-ADE5-437D-9A4B-B03558B9DEFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2FE491C-0994-4975-ACFC-3F8D4FAD20EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2FE491C-0994-4975-ACFC-3F8D4FAD20EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2FE491C-0994-4975-ACFC-3F8D4FAD20EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2FE491C-0994-4975-ACFC-3F8D4FAD20EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -180,6 +190,8 @@ Global
 		{1A219F4C-067A-4319-AF39-4BB0FF5A8B6E} = {A3D021FA-10E7-4FF9-BC24-DD701F225828}
 		{498E1F90-1346-40D4-8F2A-468486F3F2A5} = {773CC4E8-6805-43AF-880B-1FD35577D25E}
 		{12F2C416-ADE5-437D-9A4B-B03558B9DEFD} = {773CC4E8-6805-43AF-880B-1FD35577D25E}
+		{A0E84A5B-0FC8-4FCC-A802-8B4C3BEC225A} = {860703B1-6EE0-4612-B0FA-A11097C4266F}
+		{F2FE491C-0994-4975-ACFC-3F8D4FAD20EF} = {A0E84A5B-0FC8-4FCC-A802-8B4C3BEC225A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {037C5D6A-591E-4375-A877-7F3DA674C8E2}

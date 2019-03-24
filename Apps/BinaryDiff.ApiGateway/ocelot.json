@@ -47,18 +47,6 @@
       ],
       "UpstreamPathTemplate": "/v1/diff/{id}",
       "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/diffs/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "result-webapi",
-          "Port": 6000
-        }
-      ],
-      "UpstreamPathTemplate": "/v1/diff/{id}",
-      "UpstreamHttpMethod": [ "POST" ]
     }
   ],
   "GlobalConfiguration": {}

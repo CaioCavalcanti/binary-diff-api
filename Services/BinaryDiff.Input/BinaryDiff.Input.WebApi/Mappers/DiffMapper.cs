@@ -9,7 +9,9 @@ namespace BinaryDiff.Input.WebApi.Mappers
         public DiffMapper()
         {
             CreateMap<Diff, DiffViewModel>()
-                .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.UUID));
+                .ForMember(
+                    dest => dest.Id,
+                    opts => opts.MapFrom(src => src.UUID));
         }
     }
 }

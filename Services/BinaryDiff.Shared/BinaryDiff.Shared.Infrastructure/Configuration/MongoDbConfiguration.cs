@@ -1,6 +1,6 @@
 ﻿namespace BinaryDiff.Shared.Infrastructure.Configuration
 {
-    public class MongoConfiguration
+    public class MongoDbConfiguration
     {
         public string Host { get; set; }
 

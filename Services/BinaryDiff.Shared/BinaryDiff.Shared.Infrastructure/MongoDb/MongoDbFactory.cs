@@ -7,7 +7,7 @@ namespace BinaryDiff.Shared.Infrastructure.MongoDb
 {
     public static class MongoDbFactory
     {
-        public static IMongoClient GetClient(MongoConfiguration mongoConfig)
+        public static IMongoClient GetClient(MongoDbConfiguration mongoConfig)
         {
             if (mongoConfig == null) throw new ArgumentNullException(nameof(mongoConfig));
 

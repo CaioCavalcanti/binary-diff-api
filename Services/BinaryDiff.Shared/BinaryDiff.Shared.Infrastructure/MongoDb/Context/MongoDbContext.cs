@@ -10,7 +10,7 @@ namespace BinaryDiff.Shared.Infrastructure.MongoDb.Context
     {
         private readonly IMongoClient _client;
 
-        public MongoDbContext(IOptions<MongoConfiguration> configOptions, ILogger<MongoDbContext> logger)
+        public MongoDbContext(IOptions<MongoDbConfiguration> configOptions, ILogger<MongoDbContext> logger)
         {
             var config = configOptions?.Value ?? throw new ArgumentNullException(nameof(configOptions));
 

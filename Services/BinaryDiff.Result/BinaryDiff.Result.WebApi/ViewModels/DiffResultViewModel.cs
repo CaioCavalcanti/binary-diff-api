@@ -8,7 +8,12 @@ namespace BinaryDiff.Result.WebApi.ViewModels
     public class DiffResultViewModel
     {
         /// <summary>
-        /// User friendly result description
+        /// Result ID
+        /// </summary>
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Result name
         /// </summary>
         public string Result { get; set; }
 

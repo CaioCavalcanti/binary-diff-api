@@ -42,7 +42,7 @@ namespace BinaryDiff.Shared.WebApi.Middlewares
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsync(JsonConvert.SerializeObject(message));
 
-                _logger.LogError(ex, $"[ErrorId={errorId.ToString()}] {context.Request.Method} {context.Request.Path}");
+                _logger.LogError(ex, $"[ErrorId={errorId}] {context.Request.Method} {context.Request.Path}");
 
                 return;
             }

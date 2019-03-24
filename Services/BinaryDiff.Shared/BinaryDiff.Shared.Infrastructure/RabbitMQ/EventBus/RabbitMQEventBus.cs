@@ -43,8 +43,6 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
             _subscriptionManager = new SubscriptionManager();
             _subscriptionManager.OnEventRemoved += OnSubscriptionManagerEventRemoved;
             _subscriptionManager.OnEventAdded += OnSubscriptionManagerEventAdded;
-
-            _consumerChannel = CreateConsumerChannel();
         }
 
         private IModel CreateConsumerChannel()
@@ -222,6 +220,11 @@ namespace BinaryDiff.Shared.Infrastructure.RabbitMQ.EventBus
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>
         {
+            if (_consumerChannel.IsClosed)
+            {
+                _consumerChannel = CreateConsumerChannel();
+            }
+
             _subscriptionManager.AddSubscription<T, TH>();
         }
 

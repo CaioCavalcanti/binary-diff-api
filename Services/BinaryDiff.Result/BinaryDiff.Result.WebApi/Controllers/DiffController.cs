@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BinaryDiff.Result.Domain.Enums;
 using BinaryDiff.Result.Domain.Models;
 using BinaryDiff.Result.Infrastructure.Repositories;
 using BinaryDiff.Result.WebApi.ViewModels;
@@ -17,25 +16,30 @@ namespace BinaryDiff.Result.WebApi.Controllers
     {
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private readonly IUnitOfWork _uow;
+        private readonly IDiffResultsRepository _repository;
 
         public DiffController(
             ILogger<DiffController> logger,
             IMapper mapper,
-            IUnitOfWork uow
+            IDiffResultsRepository repository
         )
         {
             _logger = logger;
             _mapper = mapper;
-            _uow = uow;
+            _repository = repository;
         }
 
+        /// <summary>
+        /// Returns the last result registered for a given diff id
+        /// </summary>
+        /// <param name="diffId">Guid diff unique id</param>
+        /// <returns></returns>
         [HttpGet("{diffId}")]
         [ProducesResponseType(typeof(DiffResultViewModel), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(typeof(ResourceNotFoundForIdResultMessage<DiffResult>), 404)]
         [ProducesResponseType(typeof(ExceptionResultMessage), 500)]
-        public async Task<IActionResult> GetLastResultAsync([FromRoute]Guid diffId)
+        public async Task<IActionResult> GetAsync([FromRoute]Guid diffId)
         {
             _logger.LogDebug($"Request to get last result for {diffId}");
 
@@ -48,7 +52,7 @@ namespace BinaryDiff.Result.WebApi.Controllers
 
             _logger.LogDebug($"Getting last result {diffId} on repository");
 
-            var result = await _uow.DiffResultsRepository.GetLastResultForDiffAsync(diffId);
+            var result = await _repository.GetLastResultForDiffAsync(diffId);
 
             if (result == null)
             {
@@ -61,49 +65,7 @@ namespace BinaryDiff.Result.WebApi.Controllers
 
             var resultViewModel = _mapper.Map<DiffResultViewModel>(result);
 
-            return Ok(resultViewModel);
-        }
-
-        [HttpPost("{diffId}")]
-        [ProducesResponseType(typeof(NewDiffResultViewModel), 201)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(typeof(ResourceNotFoundForIdResultMessage<DiffResult>), 404)]
-        [ProducesResponseType(typeof(ExceptionResultMessage), 500)]
-        public async Task<IActionResult> PostResultAsync([FromRoute]Guid diffId, [FromBody]NewDiffResultViewModel newResult)
-        {
-            _logger.LogDebug($"Request to add result for {diffId}");
-
-            if (!ModelState.IsValid)
-            {
-                _logger.LogInformation($"Model for {diffId} is not valid");
-
-                return BadRequest(ModelState);
-            }
-
-            if (newResult.Result == ResultType.Different &&
-                (newResult.Differences == null || newResult.Differences.Keys.Count == 0))
-            {
-                ModelState.AddModelError("Differences", "Differences field is mandatory if result is different");
-
-                _logger.LogInformation($"Model for {diffId} is not valid");
-
-                return BadRequest(ModelState);
-            }
-
-            _logger.LogDebug($"Adding result to {diffId} on repository");
-
-            var result = _mapper.Map<DiffResult>(newResult);
-            result.DiffId = diffId;
-
-            _uow.DiffResultsRepository.Add(result);
-
-            await _uow.SaveChangesAsync();
-
-            _logger.LogDebug($"Result added for {diffId}: {result.Id}");
-
-            var resultViewModel = _mapper.Map<DiffResultViewModel>(result);
-
-            return Created($"/diffs/{result.DiffId}/results/{result.Id}", resultViewModel);
+            return new ObjectResult(resultViewModel);
         }
     }
 }

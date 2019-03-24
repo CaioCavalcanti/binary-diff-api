@@ -58,7 +58,7 @@ namespace BinaryDiff.Shared.WebApi.Extensions
 
         /// <summary>
         /// Initialize AutoMapper, getting mappings from classes that inherits Profile,
-        /// validating the configuration and providing it on IoC
+        /// validating the configuration and providing it on container
         /// </summary>
         /// <param name="services">Instance of IServiceCollection</param>
         /// <returns></returns>
@@ -70,27 +70,45 @@ namespace BinaryDiff.Shared.WebApi.Extensions
             return services.AddAutoMapper();
         }
 
+        /// <summary>
+        /// Adds mongodb configuration options from environment and IMongoDbContext to container as singleton.
+        /// Requires 'mongodb' section configured on host (appsettings or environment)
+        /// </summary>
+        /// <param name="services">Instance of IServiceCollection</param>
+        /// <param name="config">App configuration to get section 'mongodb'</param>
+        /// <returns></returns>
         public static IServiceCollection UseMongoDb(this IServiceCollection services, IConfiguration config)
         {
-            var mongoConfig = config.GetSection("mongodb") ?? throw new Exception("Section 'mongodb' not found on host settings");
-
             return services
                 .AddOptions()
-                .Configure<MongoConfiguration>(mongoConfig)
+                .Configure<MongoDbConfiguration>(config.GetSection("mongodb"))
                 .AddSingleton<IMongoDbContext, MongoDbContext>();
         }
 
+        /// <summary>
+        /// Adds rabbitmq configration options form environment and IRabbitMQEventBus to container as singleton
+        /// Requires 'rabbitmq' section configured on host (appsettings or environment).
+        /// </summary>
+        /// <param name="services">Instance of IServiceCollection</param>
+        /// <param name="config">App configuration to get section 'rabbitmq'</param>
+        /// <returns>Instance of IServiceCollection with RabbitMQ added on it</returns>
         public static IServiceCollection UseRabbitMQ(this IServiceCollection services, IConfiguration config)
         {
-            var rabbitMQConfig = config.GetSection("rabbitmq") ?? throw new Exception("Section 'rabbitmq' not found on host settings");
-
             return services
                 .AddOptions()
-                .Configure<RabbitMQConfiguration>(rabbitMQConfig)
+                .Configure<RabbitMQConfiguration>(config.GetSection("rabbitmq"))
                 .AddSingleton<IRabbitMQPersistentConnection, RabbitMQPersistentConnection>()
                 .AddSingleton<IRabbitMQEventBus, RabbitMQEventBus>();
         }
 
+        /// <summary>
+        /// Generates an AutoFac service provider for a given IServiceCollection.
+        /// In this solution this is required on apps that use IRabbitMQEventBus, 
+        /// so it can create a ILifeTimeScope to resolve integration event handler 
+        /// when a new event is received and dispose it right after executing the handler.
+        /// </summary>
+        /// <param name="services">Instance of IServiceCollection</param>
+        /// <returns>A new AutoFacServiceProvider instance</returns>
         public static AutofacServiceProvider UseAutoFacServiceProvider(this IServiceCollection services)
         {
             var container = new ContainerBuilder();

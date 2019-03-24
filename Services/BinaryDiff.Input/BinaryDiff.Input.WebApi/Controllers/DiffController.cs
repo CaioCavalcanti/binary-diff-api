@@ -39,10 +39,14 @@ namespace BinaryDiff.Input.WebApi.Controllers
             _eventBus = eventBus;
         }
 
+        /// <summary>
+        /// Adds a new diff to repository and return its id
+        /// </summary>
+        /// <returns>DiffViewModel</returns>
         [HttpPost]
         [ProducesResponseType(typeof(DiffViewModel), 201)]
         [ProducesResponseType(typeof(ExceptionResultMessage), 500)]
-        public async Task<IActionResult> Post()
+        public async Task<IActionResult> PostAsync()
         {
             _logger.LogInformation("New diff request");
 
@@ -52,34 +56,46 @@ namespace BinaryDiff.Input.WebApi.Controllers
 
             await _diffRepository.AddOneAsync(newDiff);
 
-            _logger.LogInformation($"Diff added ({newDiff.UUID.ToString()})");
+            _logger.LogInformation($"Diff added ({newDiff.UUID})");
 
             var viewModel = _mapper.Map<DiffViewModel>(newDiff);
 
             return Created(newDiff.UUID.ToString(), viewModel);
         }
 
+        /// <summary>
+        /// Adds data to left position of a diff of given id
+        /// </summary>
+        /// <param name="id">From route - Guid diff unique identifier</param>
+        /// <param name="input">From body - Data to be added on position</param>
+        /// <returns>InputCreatedViewModel</returns>
         [HttpPost("{id}/left")]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(typeof(InputViewModel), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(typeof(ResourceNotFoundForIdResultMessage<Diff>), 404)]
         [ProducesResponseType(typeof(ExceptionResultMessage), 500)]
-        public async Task<IActionResult> PostLeft([FromRoute]Guid id, [FromBody]InputViewModel input)
+        public async Task<IActionResult> PostLeftAsync([FromRoute]Guid id, [FromBody]NewInputViewModel input)
         {
             return await HandlePostInputRequest(id, input, InputPosition.Left);
         }
 
+        /// <summary>
+        /// Adds data to right position of a diff of given id
+        /// </summary>
+        /// <param name="id">From route - Guid diff unique identifier</param>
+        /// <param name="input">From body - Data to be added on position</param>
+        /// <returns>InputCreatedViewModel</returns>
         [HttpPost("{id}/right")]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(typeof(InputViewModel), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(typeof(ResourceNotFoundForIdResultMessage<Diff>), 404)]
         [ProducesResponseType(typeof(ExceptionResultMessage), 500)]
-        public async Task<IActionResult> PostRight([FromRoute]Guid id, [FromBody]InputViewModel input)
+        public async Task<IActionResult> PostRightAsync([FromRoute]Guid id, [FromBody]NewInputViewModel input)
         {
             return await HandlePostInputRequest(id, input, InputPosition.Right);
         }
 
-        private async Task<IActionResult> HandlePostInputRequest(Guid diffId, InputViewModel input, InputPosition position)
+        private async Task<IActionResult> HandlePostInputRequest(Guid diffId, NewInputViewModel input, InputPosition position)
         {
             if (!ModelState.IsValid)
             {
@@ -115,7 +131,9 @@ namespace BinaryDiff.Input.WebApi.Controllers
 
             _logger.LogInformation($"Integration event ({eventMessage.Id}) sent!");
 
-            return Created(diffId.ToString(), null);
+            var viewModel = _mapper.Map<InputViewModel>(newInput);
+
+            return Created(newInput.Id, viewModel);
         }
     }
 }
