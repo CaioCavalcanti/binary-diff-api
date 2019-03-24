@@ -175,6 +175,8 @@ Content-type: application/json
 
 # Improvements opportunities
 
+- Increase code coverage
+- Implement integration tests on single services
 - Use Kubernetes to orchestrate and scale containers
 - Use redis to cache results in memory
 - Add endpoints to get details for input and diff result by id
