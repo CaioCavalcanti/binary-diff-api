@@ -1,6 +1,6 @@
 # binary-diff-api
 
-This is a proof of concept of an RESTful API built upon ASP.NET Core
+This is a proof of concept of a scalable RESTful API built upon ASP.NET Core
 
 PoC proposal:
 
@@ -96,12 +96,22 @@ HTTP/1.1 200 OK
 }
 ```
 
-## Unit Tests
+## Unit and Integration Tests
 
-You can execute the tests using [NET Core CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/?tabs=netcore2x) with the command below:
+You can execute the unit tests using [NET Core CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/?tabs=netcore2x) with the command below:
 
 ```
 $ dotnet test
+```
+
+## Integration Tests
+
+Before running the integration tests, you'll need to start the service containers on Docker as shown on the section [Running It](#Running-It):
+
+After getting all up and running you can just run the tests on project `BinaryDiff.IntegrationTests`:
+
+```
+$ Tests\BinaryDiff.IntegrationTests> dotnet test
 ```
 
 # Assumptions
@@ -165,6 +175,7 @@ Content-type: application/json
 
 # Improvements opportunities
 
+- Use Kubernetes to orchestrate and scale containers
 - Use redis to cache results in memory
 - Add endpoints to get details for input and diff result by id
 - Implement HATEOAS
